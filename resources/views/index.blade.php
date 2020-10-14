@@ -7,7 +7,7 @@
     </head>
     <body>
         <div id="app">
-            <router-view></router-view>
+            <app></app>
         </div>
     </body>
 </html>
