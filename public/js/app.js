@@ -51606,25 +51606,15 @@ var actions = {
           switch (_context2.prev = _context2.next) {
             case 0:
               dispatch = _ref2.dispatch, state = _ref2.state, getters = _ref2.getters;
-
-              if (getters.hasCart) {
-                _context2.next = 4;
-                break;
-              }
-
+              url = 'api/carts/' + state.cartId + '/items/' + product.id;
               _context2.next = 4;
-              return dispatch('createCart');
-
-            case 4:
-              url = 'api/carts/' + state.cartId + '/items';
-              _context2.next = 7;
               return axios["delete"](url, {
-                cart_key: state.cartKey,
-                product_id: product.id,
-                quantity: 1
+                data: {
+                  cart_key: state.cartKey
+                }
               });
 
-            case 7:
+            case 4:
             case "end":
               return _context2.stop();
           }

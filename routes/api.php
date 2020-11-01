@@ -46,5 +46,5 @@ Route::post('/carts', [CartController::class, 'create']);
 Route::delete('/carts/{cart}', [CartController::class, 'destroy']);
 Route::get('/carts/{cart}/items', [CartController::class, 'getProducts']);
 Route::post('/carts/{cart}/items', [CartController::class, 'insertProduct']);
-Route::delete('/carts/{cart}/items', [CartController::class, 'deleteProducts']);
-Route::delete('/carts/{cart}/items/{product}', [CartController::class, 'deleteProduct']);
+Route::delete('/carts/{cart}/items', [CartController::class, 'removeProducts']);
+Route::delete('/carts/{cart}/items/{product}', [CartController::class, 'removeProduct']);

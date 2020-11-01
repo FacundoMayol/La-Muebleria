@@ -28,12 +28,11 @@ const actions = {
         state,
         getters
     }, product) {
-        if(!getters.hasCart) await dispatch('createCart')
-        const url = 'api/carts/'+state.cartId+'/items'
+        const url = 'api/carts/'+state.cartId+'/items/'+product.id
         await axios.delete(url, {
-            cart_key: state.cartKey,
-            product_id: product.id,
-            quantity: 1
+            data: {
+                cart_key: state.cartKey
+            }
         })
     },
     async createCart({

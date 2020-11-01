@@ -80,30 +80,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     retrieveProducts: 'retrieveProducts',
     removeFromCartAction: 'removeFromCart'
   })), {}, {
-    fetchData: function () {
-      var _fetchData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var items, tempError;
+    removeFromCart: function () {
+      var _removeFromCart = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(product) {
+        var tempError;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                this.loading = true;
-                _context.prev = 1;
-                _context.next = 4;
-                return this.retrieveProducts();
+                _context.prev = 0;
+                _context.next = 3;
+                return this.removeFromCartAction(product);
 
-              case 4:
-                items = _context.sent;
-                console.log(items);
-                this.items = items.data;
-                this.totalItems = items.total_items;
-                this.totalCost = items.total_cost;
-                _context.next = 17;
+              case 3:
+                console.log("Producto eliminado");
+                _context.next = 12;
                 break;
 
-              case 11:
-                _context.prev = 11;
-                _context.t0 = _context["catch"](1);
+              case 6:
+                _context.prev = 6;
+                _context.t0 = _context["catch"](0);
                 console.log(_context.t0);
                 tempError = "";
 
@@ -117,17 +112,71 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 this.error = tempError + " (" + _context.t0.message + ")";
 
-              case 17:
-                _context.prev = 17;
-                this.loading = false;
-                return _context.finish(17);
+              case 12:
+                this.fetchData();
 
-              case 20:
+              case 13:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 11, 17, 20]]);
+        }, _callee, this, [[0, 6]]);
+      }));
+
+      function removeFromCart(_x) {
+        return _removeFromCart.apply(this, arguments);
+      }
+
+      return removeFromCart;
+    }(),
+    fetchData: function () {
+      var _fetchData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var items, tempError;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                this.loading = true;
+                _context2.prev = 1;
+                _context2.next = 4;
+                return this.retrieveProducts();
+
+              case 4:
+                items = _context2.sent;
+                console.log(items);
+                this.items = items.data;
+                this.totalItems = items.total_items;
+                this.totalCost = items.total_cost;
+                _context2.next = 17;
+                break;
+
+              case 11:
+                _context2.prev = 11;
+                _context2.t0 = _context2["catch"](1);
+                console.log(_context2.t0);
+                tempError = "";
+
+                if (_context2.t0.response) {
+                  if (_context2.t0.response.status == 404) tempError += "El recurso solicitado no existe";else if (_context2.t0.response.status == 401 || _context2.t0.response.status == 403) tempError += "No posee acceso al recurso solicitado";
+                } else if (_context2.t0.request) {
+                  tempError = "El servidor tardó en responder";
+                } else {
+                  tempError = "No se pudo comunicar con el servidor";
+                }
+
+                this.error = tempError + " (" + _context2.t0.message + ")";
+
+              case 17:
+                _context2.prev = 17;
+                this.loading = false;
+                return _context2.finish(17);
+
+              case 20:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this, [[1, 11, 17, 20]]);
       }));
 
       function fetchData() {
@@ -135,10 +184,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       return fetchData;
-    }(),
-    addToCart: function addToCart(product) {
-      console.log("Sos down no¡");
-    }
+    }()
   }),
   components: {
     TitleBanner: _components_TheTitleBanner__WEBPACK_IMPORTED_MODULE_2__["default"],

@@ -77,15 +77,13 @@ class CartController extends Controller
     public function removeProduct(Cart $cart, Product $product, Request $request)
     {
         $validator = $request->validate([
-            'cart_key' => 'required|uuid',
-            'quantity' => 'required|numeric|min:1'
+            'cart_key' => 'required|uuid'
         ]);
 
         $cartKey = $request->input('cart_key');
-        $quantity = $request->input('quantity');
 
         if ($cart->key == $cartKey) {
-            CartItem::destroy(['cart_id' => $cart->getKey(), 'product_id' => $product->getKey()]);
+            CartItem::where(['cart_id' => $cart->getKey(), 'product_id' => $product->getKey()])->delete();
         } else {
             return response(__('messages.invalid_cart_key'), 401);
         }

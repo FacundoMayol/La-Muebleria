@@ -55,6 +55,27 @@ export default {
             retrieveProducts: 'retrieveProducts',
             removeFromCartAction: 'removeFromCart'
         }),
+        removeFromCart: async function (product) {
+            try{
+                await this.removeFromCartAction(product)
+                console.log("Producto eliminado")
+            }catch(e){
+                console.log(e);
+                var tempError = ""
+                if (e.response) {
+                    if(e.response.status == 404)
+                        tempError += "El recurso solicitado no existe"
+                    else if(e.response.status == 401 || e.response.status == 403)
+                        tempError += "No posee acceso al recurso solicitado"
+                } else if (e.request) {
+                    tempError = "El servidor tardó en responder";
+                } else {
+                    tempError = "No se pudo comunicar con el servidor";
+                }
+                this.error = tempError + " (" + e.message + ")"
+            }
+            this.fetchData()
+        },
         fetchData: async function () {
             this.loading = true
             try{
@@ -80,9 +101,6 @@ export default {
             } finally {
                 this.loading = false
             }
-        },
-        addToCart: function(product) {
-            console.log("Sos down no¡")
         }
     },
     components: {
