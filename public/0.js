@@ -59,6 +59,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -324,14 +329,14 @@ var render = function() {
         "div",
         { staticClass: "container mx-auto p-5" },
         [
-          _c("div", [
-            _c(
-              "h3",
-              {
-                staticClass:
-                  "text-sm md:text-base font-bold uppercase tracking-tighter"
-              },
-              [
+          _c(
+            "div",
+            {
+              staticClass:
+                "flex items-center text-sm md:text-base tracking-tighter"
+            },
+            [
+              _c("h3", { staticClass: "flex-grow uppercase font-bold" }, [
                 _vm._v(
                   "\n                " +
                     _vm._s(
@@ -345,9 +350,23 @@ var render = function() {
                     ) +
                     "\n            "
                 )
-              ]
-            )
-          ]),
+              ]),
+              _vm._v(" "),
+              !_vm.loading && _vm.totalItems > 0
+                ? _c("span", { staticClass: "font-semibold" }, [
+                    _vm._v(
+                      "\n                Costo total: " +
+                        _vm._s(_vm.totalCost) +
+                        "\n            "
+                    )
+                  ])
+                : _c("span", { staticClass: "font-semibold" }, [
+                    _vm._v(
+                      "\n                Ingrese al menos un producto\n            "
+                    )
+                  ])
+            ]
+          ),
           _vm._v(" "),
           _c("hr", { staticClass: "border-gray-500 my-2" }),
           _vm._v(" "),
@@ -391,7 +410,7 @@ var render = function() {
                   },
                   [
                     _vm._v(
-                      "\n                No se encontraron productos que coincidan con tu busqueda\n            "
+                      "\n                No hay productos en su carrito\n            "
                     )
                   ]
                 )
@@ -417,12 +436,6 @@ var render = function() {
                       })
                     }),
                     1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "p",
-                    { staticClass: "text-center text-xl font-semibold" },
-                    [_vm._v(_vm._s(_vm.totalCost))]
                   )
                 ])
           ])

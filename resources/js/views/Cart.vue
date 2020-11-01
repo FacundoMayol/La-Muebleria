@@ -2,10 +2,16 @@
     <div>
         <TitleBanner>Items en carrito</TitleBanner>
         <div class="container mx-auto p-5">
-            <div>
-                <h3 class="text-sm md:text-base font-bold uppercase tracking-tighter">
+            <div class="flex items-center text-sm md:text-base tracking-tighter">
+                <h3 class="flex-grow uppercase font-bold">
                     {{ loading?'Cargando...':(totalItems==0?'Sin productos encontrados':(totalItems==1?'1 producto encontrado':(totalItems + ' productos encontrados'))) }}
                 </h3>
+                <span v-if="!loading&&totalItems>0" class="font-semibold">
+                    Costo total: {{ totalCost }}
+                </span>
+                <span v-else class="font-semibold">
+                    Ingrese al menos un producto
+                </span>
             </div>
             <hr class="border-gray-500 my-2">
             <transition name="fade" mode="out-in">
@@ -17,13 +23,12 @@
                     Error al obtener los productos de la base de datos: {{ error }}
                 </div>
                 <div :key="2" v-else-if="items.length == 0" class="flex justify-center items-center text-center align-middle py-8 text-xl font-semibold text-orange-600">
-                    No se encontraron productos que coincidan con tu busqueda
+                    No hay productos en su carrito
                 </div>
                 <div :key="3" v-else>
                     <div class="flex-col divide-y divide-gray-400">
                         <CartRowItem v-for="(item, index) in items" :key="index" :to="{ name: 'product', params: { productId: item.id } }" :product="item" @remove="removeFromCart(item)"/>
                     </div>
-                    <p class="text-center text-xl font-semibold">{{ totalCost }}</p>
                 </div>
             </transition>
         </div>
