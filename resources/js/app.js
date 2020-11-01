@@ -1,5 +1,7 @@
 require('./bootstrap');
 
+axios.defaults.headers.common['X-localization'] = 'es'
+
 import Vue from 'vue'
 
 import { library } from '@fortawesome/fontawesome-svg-core'

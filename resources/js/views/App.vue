@@ -1,14 +1,14 @@
 <template>
-    <div>   
-        <navbar></navbar>
+    <div class="contents">   
+        <Navbar/>
         <transition name="fade" mode="out-in">
-            <router-view></router-view>
+            <router-view/>
         </transition>
     </div>
 </template>
 
 <script>
-import Navbar from './components/Navbar'
+import Navbar from './components/TheNavbar'
 
 export default {
     components: {
@@ -16,13 +16,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-</style>

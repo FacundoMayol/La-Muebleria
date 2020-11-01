@@ -14,7 +14,7 @@
         "cross-env": "^7.0",
         "laravel-mix": "^5.0.1",
         "lodash": "^4.17.19",
-        "resolve-url-loader": "^3.1.0",
+        "resolve-url-loader": "^3.1.2",
         "sass": "^1.27.0",
         "sass-loader": "^8.0.2",
         "stylelint-config-standard": "^20.0.0",
@@ -26,10 +26,11 @@
         "@fortawesome/free-regular-svg-icons": "^5.15.1",
         "@fortawesome/free-solid-svg-icons": "^5.15.1",
         "@fortawesome/vue-fontawesome": "^2.0.0",
+        "nouislider": "^14.6.2",
         "tailwindcss": "^1.8.13",
         "vue": "^2.6.12",
-        "vue-i18n": "^8.22.0",
         "vue-router": "^3.4.6",
-        "vuex": "^3.5.1"
+        "vuex": "^3.5.1",
+        "wnumb": "^1.2.0"
     }
 }
