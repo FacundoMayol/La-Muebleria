@@ -52450,7 +52450,7 @@ var Build = function Build() {
 };
 
 var Categories = function Categories() {
-  return __webpack_require__.e(/*! import() */ 3).then(__webpack_require__.bind(null, /*! ../views/Categories */ "./resources/js/views/Categories.vue"));
+  return __webpack_require__.e(/*! import() */ 4).then(__webpack_require__.bind(null, /*! ../views/Categories */ "./resources/js/views/Categories.vue"));
 };
 
 var ProductList = function ProductList() {
@@ -52458,7 +52458,7 @@ var ProductList = function ProductList() {
 };
 
 var ViewProduct = function ViewProduct() {
-  return __webpack_require__.e(/*! import() */ 4).then(__webpack_require__.bind(null, /*! ../views/ViewProduct */ "./resources/js/views/ViewProduct.vue"));
+  return __webpack_require__.e(/*! import() */ 2).then(__webpack_require__.bind(null, /*! ../views/ViewProduct */ "./resources/js/views/ViewProduct.vue"));
 };
 
 var Search = function Search() {
@@ -52474,7 +52474,7 @@ var SignUp = function SignUp() {
 };
 
 var Cart = function Cart() {
-  return __webpack_require__.e(/*! import() */ 2).then(__webpack_require__.bind(null, /*! ../views/Cart */ "./resources/js/views/Cart.vue"));
+  return __webpack_require__.e(/*! import() */ 3).then(__webpack_require__.bind(null, /*! ../views/Cart */ "./resources/js/views/Cart.vue"));
 };
 
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
@@ -52491,14 +52491,14 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     path: '/search',
     name: 'search',
     component: Search,
-    meta: {
-      title: 'Buscar'
-    },
     props: function props(route) {
       return {
         searchQuery: route.query.s,
-        pageQuery: route.query.p
+        pageQuery: !isNaN(parseInt(route.query.p, 10)) ? parseInt(route.query.p, 10) : 0
       };
+    },
+    meta: {
+      title: 'Buscar'
     }
   }, {
     path: '/login',
@@ -52546,11 +52546,20 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       title: 'Ver producto'
     }
   }, {
-    path: '/products/case',
-    name: 'case',
+    path: '/products/:category',
+    name: 'list',
     component: ProductList,
+    props: function props(route) {
+      return {
+        categoryParam: route.params.category,
+        searchQuery: route.query.s,
+        pageQuery: !isNaN(parseInt(route.query.p, 10)) ? parseInt(route.query.p, 10) : 0,
+        sortQuery: route.query.sort,
+        sortDescQuery: route.query.sortd == 'true'
+      };
+    },
     meta: {
-      title: 'Gabinetes'
+      title: 'Ver categoría'
     }
   }, {
     path: '*',

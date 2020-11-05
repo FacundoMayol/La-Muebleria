@@ -32,10 +32,10 @@ const router = new VueRouter({
             path: '/search', 
             name: 'search', 
             component: Search,
+            props: route => ({ searchQuery: route.query.s, pageQuery: !isNaN(parseInt(route.query.p, 10))?parseInt(route.query.p, 10):0 }),
             meta: {
                 title: 'Buscar'
-            },
-            props: route => ({ searchQuery: route.query.s, pageQuery: route.query.p })
+            }
         },
         {
             path: '/login', 
@@ -89,11 +89,12 @@ const router = new VueRouter({
             }
         },
         { 
-            path: '/products/case', 
-            name: 'case', 
+            path: '/products/:category', 
+            name: 'list', 
             component: ProductList,
+            props: route => ({ categoryParam: route.params.category, searchQuery: route.query.s, pageQuery: !isNaN(parseInt(route.query.p, 10))?parseInt(route.query.p, 10):0, sortQuery: route.query.sort, sortDescQuery: route.query.sortd == 'true' }),
             meta: {
-                title: 'Gabinetes'
+                title: 'Ver categoría'
             }
         },
         { 

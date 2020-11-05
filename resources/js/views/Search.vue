@@ -46,14 +46,18 @@ export default {
     props: {
         searchQuery: {
             type: String,
-            default: ''
+            default: null
+        },
+        pageQuery: {
+            type: Number,
+            default: 0
         }
     },
     data () {
         return {
             loading: false,
-            search: this.$route.query.s,
-            page: !isNaN(parseInt(this.$route.query.p, 10))?parseInt(this.$route.query.p, 10):0,
+            search: this.searchQuery,
+            page: this.pageQuery,
             nPages: 0,
             totalItems: 0,
             items: [],
@@ -66,9 +70,9 @@ export default {
     },
     watch: {
         $route: function () {
-            this.page = !isNaN(parseInt(this.$route.query.p, 10))?parseInt(this.$route.query.p, 10):0
-            this.search = this.$route.query.s
+            this.page = this.pageQuery
             this.nPages = 0
+            this.search = this.searchQuery
             this.totalItems = 0
             this.items = []
             this.error = null
@@ -78,9 +82,9 @@ export default {
             this.updateQueryDebounced()
         },
         search: function () {
-            if(this.$route.query.s !== this.search){
-                this.updateQueryDebounced()
+            if(this.searchQuery !== this.search){
                 this.page = 0
+                this.updateQueryDebounced()
             }
         }
     },

@@ -13,11 +13,13 @@ class ProductController extends Controller
         $list = Product::where('name', 'like', '%'.str_replace(
             ['\\', '%', '_'],
             ['\\\\', '\\%', '\\_'],
-            $request->query('s')
+            $request->input('s', '')
         ).'%');
-        $page = (int) (ctype_digit($request->query('p'))?$request->query('p'):0);
+        if($request->input('sort'))
+            $list = $list->orderBy($request->input('sort'), (bool) $request->input('sortd', false)?'desc':'asc');
+        $page = (int) $request->input('p', 0);
         $count = $list->count();
-        return ['data' => $list->skip($page*10)->take(10)->get(), 'total' => $count, 'n_pages' => ceil($count/10), 'current_page' => $page];
+        return ['data' => ProductResource::collection($list->skip($page*10)->take(10)->get()), 'total' => $count, 'n_pages' => ceil($count/10), 'current_page' => $page];
     }
 
     public function show(Product $product, Request $request)

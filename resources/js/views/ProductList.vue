@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TitleBanner>Gabinetes</TitleBanner>
+        <TitleBanner>Ver categoría</TitleBanner>
         <div class="container mx-auto my-5 lg:my-8 grid gap-5 lg:gap-8 grid-cols-1 lg:grid-cols-5">
             <div>
                 <div class="container lg:max-w-none mx-auto flex px-4 lg:hidden">
@@ -17,14 +17,14 @@
                         </div>
                         <div class="text-sm text-gray-600">
                             <label class="checkbox justify-center lg:justify-start">
-                                <input v-model="loading" type="checkbox">
+                                <input type="checkbox">
                                 <span class="checkmark"></span>
                                 Filtrado de compatibilidad
                             </label>
                         </div>
                     </div>
                     <div>
-                        <CategoryItem title="Fabricantes y precio"/>
+                        <!--CategoryItem title="Fabricantes y precio"/>
                         <CollapsibleItem title="Fabricantes" class="mb-2">
                             <MultipleChoiceItem :items.sync="manufacturer"/>
                         </CollapsibleItem>
@@ -34,24 +34,22 @@
                         <CategoryItem title="Filtros"/>
                         <CollapsibleItem title="Rating" class="mb-2">
                             <MultipleChoiceItem :items.sync="rating"/>
-                        </CollapsibleItem>
-                        <CollapsibleItem v-for="(filter, key) in filters" :key="key" :title="filter.title" class="mb-2">
-                            <MultipleChoiceItem :items.sync="manufacturer"/>
-                            <SliderRangeItem prefix="$" v-bind.sync="price"/>
-                        </CollapsibleItem>
+                        </CollapsibleItem-->
                     </div>
                 </PopupOverlay>
             </div>
             <div class="lg:col-span-4 px-4 sm:px-0">
-                <div class="flex items-baseline flex-wrap">
+                <div class="flex items-baseline flex-wrap" v-if="filtered">
                     <span class="text-sm tracking-tight font-bold">Filtrado por:</span>
-                    <FilterItem category="Marca" value="ASRock"/>
+                    <FilterItem v-if="searchQuery" @close="search=''" category="Búsqueda" :value="search"/>
                 </div>
                 <div class="flex items-center">
-                    <h3 class="flex-grow text-sm md:text-base font-bold uppercase tracking-tighter">{{ loading?'Cargando...':'30 productos encontrados' }}</h3>
+                    <h3 class="flex-grow text-sm md:text-base font-bold uppercase tracking-tighter">
+                        {{ loading?'Cargando...':(totalItems==0?'Sin productos encontrados':(totalItems==1?'1 producto encontrado':(totalItems + ' productos encontrados'))) }}
+                    </h3>
                     <div class="flex items-center">
                         <font-awesome-icon class="mx-2" icon="search"></font-awesome-icon>
-                        <input class="text-xs border rounded-md border-gray-500 placeholder-gray-500 text-gray-700 py-1 px-2" type="text" placeholder="Buscar en categoría">
+                        <input class="text-xs border rounded-md border-gray-500 placeholder-gray-500 text-gray-700 py-1 px-2" type="text" v-model="search" placeholder="Buscar en categoría">
                     </div>
                 </div>
                 <hr class="border-gray-500 my-2">
@@ -60,7 +58,7 @@
                         <span class="spinner w-8 h-8 mx-2"></span>
                         Cargando
                     </div>
-                    <div :key="2" v-else-if="items.length == 0" class="flex justify-center items-center text-center align-middle py-8 text-xl font-semibold text-orange-600">
+                    <div :key="2" v-else-if="totalItems == 0" class="flex justify-center items-center text-center align-middle py-8 text-xl font-semibold text-orange-600">
                         No se encontraron productos que coincidan con tu busqueda
                     </div>
                     <div :key="3" v-else>
@@ -69,12 +67,12 @@
                                 <thead>
                                     <tr class="text-left text-sm">
                                         <TableHeaderItem class="text-center">Imágen</TableHeaderItem>
-                                        <TableHeaderSortableItem v-for="(index, column) in columns" :key="index" v-model="column.state" :selected="column.selected">{{ column.title }}</TableHeaderSortableItem>
+                                        <TableHeaderSortableItem v-for="(column, index) in columns" :key="index" @sort="sortRows(index)" :value="sortQuery==column.name?sortDescQuery:false" :selected="sortQuery==column.name">{{ column.title }}</TableHeaderSortableItem>
                                         <TableHeaderItem class="text-center">Acciones</TableHeaderItem>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <TableRowItem v-for="item in items" :key="item.id" :to="{ name: 'product', params: { productId: item.id } }" @add="addToCart(item.id)" :disabled="item.stock == 0" :product="item.data"/>
+                                    <TableRowItem v-for="item in items" :key="item.id" :to="{ name: 'product', params: { productId: item.id } }" @add="addToCart(item)" :disabled="item.stock == 0" :product="item"/>
                                 </tbody>
                             </table>
                         </div>
@@ -89,6 +87,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import TitleBanner from './components/TheTitleBanner'
 import PopupOverlay from './components/PopupOverlay'
 import CollapsibleItem from './components/ProductList/ProductListCollapsible'
@@ -103,40 +103,171 @@ import PaginationItem from './components/ThePagination'
 
 export default {
     props: {
-        query: Object
+        categoryParam: {
+            type: String,
+            default: null
+        },
+        searchQuery: {
+            type: String,
+            default: null
+        },
+        pageQuery: {
+            type: Number,
+            default: 0
+        },
+        sortQuery: {
+            type: String,
+            default: null
+        },
+        sortDescQuery: {
+            type: Boolean,
+            default: false
+        }
     },
     data () {
         return {
             showFilters: false,
             loading: true,
             paginator: {
-                page: 0,
+                page: this.pageQuery,
                 nPages: 0
             },
-            search: this.query.s?this.query.s:'',
-            filters: {
-
-            },
-            items: []
+            search: this.searchQuery,
+            items: [],
+            totalItems: 0,
+            error: null,
+            sort: this.sortQuery,
+            sortDesc: this.sortDescQuery,
+            columns: [
+                {
+                    title: 'Nombre',
+                    name: 'name'
+                },
+                {
+                    title: 'Precio',
+                    name: 'price'
+                },
+                {
+                    title: 'Fabricante',
+                    name: 'manufacturer'
+                },
+                {
+                    title: 'Rating',
+                    name: 'rating'
+                }
+            ]
+        }
+    },
+    computed: {
+        filtered: function () {
+            return this.searchQuery?true:false
         }
     },
     created () {
         this.fetchData()
+        this.updateQueryDebounced = _.debounce(this.updateQuery, 500)
     },
     watch: {
-        '$route': this.fetchData()
+        $route: function () {
+            this.paginator.page = this.pageQuery
+            this.paginator.nPages = 0
+            this.search = this.searchQuery
+            this.items = []
+            this.totalItems = 0
+            this.error = null
+            this.fetchData()
+        },
+        'paginator.page': function () {
+            this.updateQueryDebounced()
+        },
+        search: function () {
+            if(this.$route.query.s !== this.search){
+                this.paginator.page = 0
+                this.updateQueryDebounced()
+            }
+        },
+        sort: function () {
+            this.updateQueryDebounced()
+        },
+        sortDesc: function () {
+            this.updateQueryDebounced()
+        }
     },
     methods: {
-        fetchData: function () {
-            x
+        ...mapActions('cart', {
+            addToCartAction: 'addToCart'
+        }),
+        updateQuery: function () {
+            this.$router.push({ query: { s: this.search, p: this.paginator.page, sort: this.sort, sortd: this.sortDesc } })
         },
-        updateQuery: _.debounce(function () {
-            this.$route.push({ query: {
-
-            } })
-        }, 500),
-        addToCart: function(productId) {
-            console.log(productID);
+        fetchData: async function () {
+            this.loading = true
+            try {
+                const data = (await axios.get('/api/products', {
+                    params: {
+                        s: this.search,
+                        p: this.paginator.page,
+                        sort: this.sort,
+                        sortd: this.sortDesc
+                    }
+                })).data
+                this.items = data.data
+                this.totalItems = data.total
+                this.paginator.nPages = data.n_pages
+            } catch(e) {
+                var tempError = ""
+                if (e.response) {
+                    if(e.response.status == 404)
+                        tempError += "El recurso solicitado no existe"
+                    else if(e.response.status == 401 || e.response.status == 403)
+                        tempError += "No posee acceso al recurso solicitado"
+                } else if (e.request) {
+                    tempError = "El servidor tardó en responder";
+                } else {
+                    tempError = "No se pudo comunicar con el servidor";
+                }
+                this.error = tempError + " (" + e.message + ")"
+            } finally {
+                this.loading = false
+            }
+        },
+        addToCart: async function(product) {
+            try{
+                await this.addToCartAction(product)
+                console.log("Producto añadido")
+                this.$notify({
+                    group: 'messages',
+                    type: 'success',
+                    title: 'Producto añadido exitosamente'
+                });
+            }catch(e){
+                console.log(e);
+                var tempError = ""
+                if (e.response) {
+                    if(e.response.status == 404)
+                        tempError += "El recurso solicitado no existe"
+                    else if(e.response.status == 401 || e.response.status == 403)
+                        tempError += "No posee acceso al recurso solicitado"
+                } else if (e.request) {
+                    tempError = "El servidor tardó en responder";
+                } else {
+                    tempError = "No se pudo comunicar con el servidor";
+                }
+                this.$notify({
+                    group: 'messages',
+                    type: 'error',
+                    title: 'Error',
+                    text: tempError + ' (' + e.message + ')'
+                });
+            }
+        },
+        sortRows: function (column) {
+            if(this.sort != this.columns[column].name){
+                this.sortDesc = false
+                this.sort = this.columns[column].name
+            }else{
+                this.sortDesc = !this.sortDesc
+            }
         }
     },
     components: {

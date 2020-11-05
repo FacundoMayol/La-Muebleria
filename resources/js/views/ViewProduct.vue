@@ -18,7 +18,10 @@
                         <img class="w-full lg:max-w-lg h-auto" :src="'/storage/components/'+product.image" alt="Imágen del producto"/>
                     </div>
                     <div class="space-y-2">
-                        <h1 class="text-orange-500 text-center lg:text-left text-3xl lg:text-4xl font-semibold">{{ product.name }}</h1>
+                        <div class="space-y-1">
+                            <h1 class="text-orange-500 text-center lg:text-left text-3xl lg:text-4xl font-semibold">{{ product.name }}</h1>
+                            <span class="text-orange-500 text-center lg:text-left lg:text-lg font-medium">${{ product.price }}</span>
+                        </div>
                         <div class="flex flex-col lg:flex-row items-center text-lg">
                             <span v-if="!userRating" class="text-orange-400 lg:mr-1">Valoración de los usuarios:</span>
                             <span v-else class="text-orange-400 lg:mr-1">Valoración de su usuario:</span>
@@ -34,7 +37,8 @@
                                 </template>
                             </span>
                         </div>
-                        <p>{{ product.description }}</p>
+                        <p class="text-orange-400">Marca: {{ product.manufacturer.name }}<template v-if="product.model"> - Modelo: {{ product.model }}</template></p>
+                        <p class="text-gray-800">{{ product.description }}</p>
                         <div class="flex flex-row justify-center items-center">
                             <NumberSpinnerItem @add="addToCart" :min="1" class="mr-1" v-model.number="quantity"/>
                         </div>
@@ -49,7 +53,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import TitleBanner from './components/TheTitleBanner'
-import NumberSpinnerItem from './components/ViewProduct/NumberSpinner'
+import NumberSpinnerItem from './components/ViewProduct/ViewProductNumberSpinner'
 
 export default {
     props: {

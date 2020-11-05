@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('name', 100);
             $table->decimal('price', 8, 2)->nullable();
             $table->foreignId('manufacturer_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('model', 100);
             $table->text('description')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
