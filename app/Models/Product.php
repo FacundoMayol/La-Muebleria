@@ -19,4 +19,7 @@ class Product extends Model
         return $this->belongsToMany(Cart::class);
     }
 
+    public function ratings () {
+        return $this->hasMany(Rating::class);
+    }    
 }

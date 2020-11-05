@@ -1,5 +1,6 @@
 <template>
     <div class="contents">   
+        <notifications classes="messages" position="bottom left" group="messages"/>
         <Navbar/>
         <transition name="fade" mode="out-in">
             <router-view/>

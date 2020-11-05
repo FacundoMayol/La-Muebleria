@@ -10,6 +10,7 @@ const NotFound = () => import('../views/NotFound')
 const Build = () => import('../views/Build')
 const Categories = () => import('../views/Categories')
 const ProductList = () => import('../views/ProductList')
+const ViewProduct = () => import('../views/ViewProduct')
 const Search = () => import('../views/Search')
 const LogIn = () => import('../views/LogIn')
 const SignUp = () => import('../views/SignUp')
@@ -81,9 +82,10 @@ const router = new VueRouter({
         { 
             path: '/product/:productId', 
             name: 'product', 
-            component: Categories,
+            component: ViewProduct,
+            props: true,
             meta: {
-                title: 'Productos'
+                title: 'Ver producto'
             }
         },
         { 

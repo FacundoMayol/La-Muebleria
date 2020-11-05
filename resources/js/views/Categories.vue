@@ -12,8 +12,8 @@
             <ProductItem product="cooler" title="Refrigeración" image="/images/cooler.png"></ProductItem>
         </div>
         <h2 class="mt-10 text-4xl text-orange-500 font-semibold text-center">Otros componentes</h2>
-        <div class="container mx-auto mt-10">
-            
+        <div class="container mx-auto my-10">
+            <p class="text-orange-500 text-3xl font-semibold text-center">Proximamente</p>
         </div>
     </div>
 </template>

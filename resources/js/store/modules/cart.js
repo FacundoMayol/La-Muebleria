@@ -13,22 +13,37 @@ const actions = {
     async addToCart({
         dispatch,
         state,
-        getters
-    }, product) {
+        getters,
+        commit
+    }, { id, quantity }) {
         if(!getters.hasCart) await dispatch('createCart')
-        const url = 'api/carts/'+state.cartId+'/items'
-        await axios.post(url, {
-            cart_key: state.cartKey,
-            product_id: product.id,
-            quantity: 1
-        })
+        const url = '/api/carts/'+state.cartId+'/items'
+        try {
+            await axios.post(url, {
+                cart_key: state.cartKey,
+                product_id: id,
+                quantity: quantity?quantity:1
+            })   
+        } catch (e) {
+            commit('removeCartId')
+            commit('removeCartKey')
+            throw e
+        }
     },
     async removeFromCart({
-        dispatch,
         state,
-        getters
     }, product) {
-        const url = 'api/carts/'+state.cartId+'/items/'+product.id
+        const url = '/api/carts/'+state.cartId+'/items/'+product.id
+        await axios.delete(url, {
+            data: {
+                cart_key: state.cartKey
+            }
+        })
+    },
+    async emptyCart({
+        state,
+    }) {
+        const url = 'api/carts/'+state.cartId+'/items/'
         await axios.delete(url, {
             data: {
                 cart_key: state.cartKey
@@ -38,7 +53,7 @@ const actions = {
     async createCart({
         commit
     }){
-        const data = (await axios.post('api/carts')).data
+        const data = (await axios.post('/api/carts')).data
         commit('setCartId', data.cart_id)
         commit('setCartKey', data.cart_key)
     },
@@ -53,11 +68,7 @@ const actions = {
                 total_items: 0
             }
         }
-        return (await axios.get('api/carts/'+state.cartId+'/items', {
-            params: {
-                cart_key: state.cartKey
-            }
-        })).data
+        return (await axios.get('/api/carts/'+state.cartId+'/items')).data
     }
 }
 
@@ -69,6 +80,14 @@ const mutations = {
     setCartKey(state, key){
         state.cartKey = key
         localStorage.setItem('cart_key', JSON.stringify(key))
+    },
+    removeCartId(state) {
+        state.cartId = null
+        localStorage.removeItem('cart_id')
+    },
+    removeCartKey(state) {
+        state.cartKey = null
+        localStorage.removeItem('cart_key')
     }
 }
 

@@ -16,7 +16,7 @@
                     <span class="spinner w-8 h-8 mx-2"></span>
                     Cargando
                 </div>
-                <div :key="1" v-else-if="error != ''" class="flex justify-center items-center text-center align-middle py-8 text-xl font-semibold text-orange-600">
+                <div :key="1" v-else-if="error" class="flex justify-center items-center text-center align-middle py-8 text-xl font-semibold text-orange-600">
                     Error al obtener los productos de la base de datos: {{ error }}
                 </div>
                 <div :key="2" v-else-if="items.length == 0" class="flex justify-center items-center text-center align-middle py-8 text-xl font-semibold text-orange-600">
@@ -57,7 +57,7 @@ export default {
             nPages: 0,
             totalItems: 0,
             items: [],
-            error: ''
+            error: null
         }
     },
     created () {
@@ -71,7 +71,7 @@ export default {
             this.nPages = 0
             this.totalItems = 0
             this.items = []
-            this.error = ''
+            this.error = null
             this.fetchData()
         },
         page: function () {
@@ -100,9 +100,9 @@ export default {
                         p: this.page
                     }
                 })).data
-                this.items = data['data']
-                this.nPages = data['n_pages']
-                this.totalItems = data['total']
+                this.items = data.data
+                this.nPages = data.n_pages
+                this.totalItems = data.total
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
@@ -124,6 +124,11 @@ export default {
             try{
                 await this.addToCartAction(product)
                 console.log("Producto añadido")
+                this.$notify({
+                    group: 'messages',
+                    type: 'success',
+                    title: 'Producto añadido exitosamente'
+                });
             }catch(e){
                 console.log(e);
                 var tempError = ""
@@ -137,7 +142,12 @@ export default {
                 } else {
                     tempError = "No se pudo comunicar con el servidor";
                 }
-                this.error = tempError + " (" + e.message + ")"
+                this.$notify({
+                    group: 'messages',
+                    type: 'error',
+                    title: 'Error',
+                    text: tempError + ' (' + e.message + ')'
+                });
             }
         }
     },

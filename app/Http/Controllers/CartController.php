@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Http\Resources\CartItem as CartItemResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,21 +39,10 @@ class CartController extends Controller
     
     public function getProducts(Cart $cart, Request $request)
     {
-        $validator = $request->validate([
-            'cart_key' => 'required|uuid'
-        ]);
-
-        $cartKey = $request->input('cart_key');
-
-        if ($cart->key == $cartKey) {
-            return [
-                'data' => $cart->items,
-                'total_cost' => $cart->items()->sum('price'),
-                'total_items' => $cart->items()->count()
-            ];
-        } else {
-            return response(__('messages.invalid_cart_key'), 401);
-        }
+        return [
+            'data' => CartItemResource::collection(CartItem::where(['cart_id' => $cart->getKey()])->get()),
+            'total_items' => $cart->items()->count()
+        ];
     }
     
     public function insertProduct(Cart $cart, Request $request)
@@ -88,7 +78,22 @@ class CartController extends Controller
             return response(__('messages.invalid_cart_key'), 401);
         }
     }
+    
+    public function removeProducts(Cart $cart, Request $request)
+    {
+        $validator = $request->validate([
+            'cart_key' => 'required|uuid'
+        ]);
 
+        $cartKey = $request->input('cart_key');
+
+        if ($cart->key == $cartKey) {
+            CartItem::where(['cart_id' => $cart->getKey()])->delete();
+        } else {
+            return response(__('messages.invalid_cart_key'), 401);
+        }
+    }
+    
     /*//En caso de utilizar un carrito basado en sesión
     public function getProducts(Request $request)
     {

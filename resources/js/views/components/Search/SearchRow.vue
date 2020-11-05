@@ -1,13 +1,12 @@
 <template>
     <div class="p-2 flex flex-row items-center space-x-4 lg:space-x-6">
         <div class="text-center w-20 md:w-24 hover:relative hover:z-10 flex-shrink-0 rounded-sm border bg-white transition-transform duration-150 ease-in-out transform hover:scale-150 cursor-pointer">
-            <!--template v-if="product.image">
-                <img class="block w-full h-auto" :src="product.image"/>
+            <template v-if="product.image">
+                <img class="block w-full h-auto" :src="'/storage/components/'+product.image"/>
             </template>
             <template v-else>
                 <span>-</span>
-            </template-->
-            <img class="block w-full h-auto" src="/images/motherboard.png"/>
+            </template>
         </div>
         <div class="flex flex-grow flex-col lg:flex-row break-words lg:space-x-6 lg:items-center">
             <router-link :to="to" class="flex-grow font-semibold hover:text-orange-600 text-sm lg:text-base">{{ product.name }}</router-link>

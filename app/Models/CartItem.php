@@ -8,17 +8,13 @@ class CartItem extends Model
 {
     protected $fillable = ['product_id', 'cart_id', 'quantity'];
 
-    protected $primaryKey = ['cart_id', 'product_id'];
-    protected $keyType = 'string';
-    public $incrementing = false;
-
-    public function cart()
+    public function cart ()
     {
         return $this->belongsTo(Cart::class);
     }
 
-    public function product()
+    public function product ()
     {
-        return $this->hasOne(Product::class);
+        return $this->belongsTo(Product::class);
     }
 }

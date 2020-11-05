@@ -2,7 +2,7 @@
     <header class="sticky top-0 shadow-md z-50">
         <nav role="navigation"  class="bg-orange-600 px-4 py-2 flex items-center justify-between flex-wrap">
             <router-link :to="{ name: 'main' }" class="group flex items-center justify-between mr-4">
-                <img class="w-10 h-10 mr-1" src="/images/icon.png" alt="brand"/><h1 class="text-white text-opacity-75 group-hover:text-opacity-100 transition duration-300 ease-in-out text-xl">KakeraGaming</h1>
+                <img class="w-10 h-10 mr-1 transform group-hover:rotate-45 transition duration-300 ease-in-out" src="/images/icon.png" alt="brand"/><h1 class="text-white text-opacity-75 group-hover:text-opacity-100 transition duration-300 ease-in-out text-xl">KakeraGaming</h1>
             </router-link>
             <div class="lg:hidden">
                 <button @click="hideNav = !hideNav" class="flex items-center px-3 py-2 border rounded text-white 
@@ -67,8 +67,25 @@ export default {
                 await this.logOutAction()
                 if(this.$router.currentRoute.name != 'main')
                     this.$router.push({ name: 'main' })
+                this.$notify({
+                    group: 'messages',
+                    type: 'success',
+                    title: 'Cierre de sesión exitoso'
+                })
             } catch (e) {
-                // Mostrar errores de cierre de sesión  
+                console.log(e);
+                var tempError = ""
+                if (e.request) {
+                    tempError = "El servidor tardó en responder";
+                } else {
+                    tempError = "No se pudo comunicar con el servidor";
+                }
+                this.$notify({
+                    group: 'messages',
+                    type: 'error',
+                    title: 'Error',
+                    text: tempError + ' (' + e.message + ')'
+                })
             }
         }
     }

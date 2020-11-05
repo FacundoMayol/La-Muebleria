@@ -19,7 +19,6 @@ class CreateProductsTable extends Migration
             $table->decimal('price', 8, 2)->nullable();
             $table->foreignId('manufacturer_id')->nullable()->constrained()->nullOnDelete();
             $table->text('description')->nullable();
-            $table->enum('rating', [0, 1, 2, 3, 4])->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
         });

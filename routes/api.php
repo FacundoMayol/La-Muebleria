@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RatingController;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,18 +31,15 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::get('/products', [ProductController::class, 'index']);
-Route::get('/products/{id}', function ($id) {
-    return Product::firstOrFail($id);
+Route::get('/products/{product}', [ProductController::class, 'show']);
+
+Route::get('/ratings/{product}', [RatingController::class, 'index']);
+Route::group(['middleware' => 'auth:sanctum'], function() {
+    Route::get('/user/ratings/{product}', [RatingController::class, 'show']);
+    Route::post('/user/ratings/{product}', [RatingController::class, 'create']);
+    Route::delete('/user/ratings/{product}', [RatingController::class, 'destroy']);
 });
 
-//Rutas en caso de utilizar un carrito basado en sesión
-/*Route::get('/cart', [CartController::class, 'getProducts']);
-Route::post('/cart', [CartController::class, 'insertProduct']);
-Route::delete('/cart', [CartController::class, 'deleteProducts']);
-Route::delete('/cart/{product}', [CartController::class, 'deleteProduct']);*/
-
-
-//Rutas en caso de utilizar un carrito de compras basado en base de datos, llaves y uuids de carritos.
 Route::post('/carts', [CartController::class, 'create']);
 Route::delete('/carts/{cart}', [CartController::class, 'destroy']);
 Route::get('/carts/{cart}/items', [CartController::class, 'getProducts']);

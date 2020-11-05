@@ -9,6 +9,17 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
 //
 //
 //
@@ -62,49 +73,77 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    submitCredentials: function submitCredentials() {
-      this.validationErrors = {
-        name: [],
-        email: [],
-        password: []
-      };
-      this.generalError = '';
-      this.loading = true;
-      var vm = this;
-      axios.get('/sanctum/csrf-cookie').then(function (response) {
-        axios.post('/api/auth/signup', vm.form).then(function (response) {
-          vm.$router.push({
-            name: 'login'
-          });
-        })["catch"](function (e) {
-          if (e.response) {
-            _.extend(vm.validationErrors, e.response.data.errors);
-          } else {
-            var tempError = "";
+    submitCredentials: function () {
+      var _submitCredentials = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var tempError;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                this.validationErrors = {
+                  name: [],
+                  email: [],
+                  password: []
+                };
+                this.generalError = '';
+                this.loading = true;
+                _context.prev = 3;
+                _context.next = 6;
+                return axios.get('/sanctum/csrf-cookie');
 
-            if (e.request) {
-              tempError = "El servidor tardó en responder";
-            } else {
-              tempError = "No se pudo comunicar con el servidor";
+              case 6:
+                _context.next = 8;
+                return axios.post('/api/auth/signup', this.form);
+
+              case 8:
+                this.$router.push({
+                  name: 'login'
+                });
+                this.$notify({
+                  group: 'messages',
+                  type: 'success',
+                  title: 'Registro exitoso'
+                });
+                _context.next = 15;
+                break;
+
+              case 12:
+                _context.prev = 12;
+                _context.t0 = _context["catch"](3);
+
+                if (_context.t0.response) {
+                  _.extend(this.validationErrors, _context.t0.response.data.errors);
+                } else {
+                  tempError = "";
+
+                  if (_context.t0.request) {
+                    tempError = "El servidor tardó en responder";
+                  } else {
+                    tempError = "No se pudo comunicar con el servidor";
+                  }
+
+                  this.generalError = tempError + " (" + _context.t0.message + ")";
+                }
+
+              case 15:
+                _context.prev = 15;
+                this.loading = false;
+                return _context.finish(15);
+
+              case 18:
+              case "end":
+                return _context.stop();
             }
-
-            vm.generalError = tempError + " (" + e.message + ")";
           }
-        });
-      })["catch"](function (e) {
-        var tempError = "";
+        }, _callee, this, [[3, 12, 15, 18]]);
+      }));
 
-        if (e.request) {
-          tempError = "El servidor tardó en responder";
-        } else {
-          tempError = "No se pudo comunicar con el servidor";
-        }
+      function submitCredentials() {
+        return _submitCredentials.apply(this, arguments);
+      }
 
-        vm.generalError = tempError + " (" + e.message + ")";
-      })["finally"](function () {
-        vm.loading = false;
-      });
-    }
+      return submitCredentials;
+    }()
   }
 });
 
@@ -148,200 +187,223 @@ var render = function() {
             [_vm._v("Registrarse")]
           ),
           _vm._v(" "),
-          _c(
-            "form",
-            {
-              staticClass: "px-8 py-6 space-y-6",
-              on: {
-                submit: function($event) {
-                  $event.preventDefault()
-                  return _vm.submitCredentials($event)
+          _c("div", { staticClass: "px-8 py-6" }, [
+            _c(
+              "form",
+              {
+                staticClass: "space-y-6",
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.submitCredentials($event)
+                  }
                 }
-              }
-            },
-            [
-              _c(
-                "div",
-                { staticClass: "space-y-2" },
-                [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.form.name,
-                        expression: "form.name"
-                      }
-                    ],
-                    staticClass:
-                      "w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out",
-                    attrs: { type: "text", placeholder: "Nombre de usuario" },
-                    domProps: { value: _vm.form.name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "space-y-2" },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.form.name,
+                          expression: "form.name"
                         }
-                        _vm.$set(_vm.form, "name", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _vm._l(_vm.validationErrors.name, function(error, index) {
-                    return _c(
-                      "p",
-                      { key: index, staticClass: "text-red-600" },
-                      [_vm._v(_vm._s(error))]
-                    )
-                  })
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "space-y-2" },
-                [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.form.email,
-                        expression: "form.email"
-                      }
-                    ],
-                    staticClass:
-                      "w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out",
-                    attrs: {
-                      type: "text",
-                      placeholder: "Dirección de correo electrónico"
-                    },
-                    domProps: { value: _vm.form.email },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                      ],
+                      staticClass:
+                        "w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out",
+                      attrs: { type: "text", placeholder: "Nombre de usuario" },
+                      domProps: { value: _vm.form.name },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.form, "name", $event.target.value)
                         }
-                        _vm.$set(_vm.form, "email", $event.target.value)
                       }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _vm._l(_vm.validationErrors.email, function(error, index) {
-                    return _c(
-                      "p",
-                      { key: index, staticClass: "text-red-600" },
-                      [_vm._v(_vm._s(error))]
-                    )
-                  })
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "space-y-2" },
-                [
+                    }),
+                    _vm._v(" "),
+                    _vm._l(_vm.validationErrors.name, function(error, index) {
+                      return _c(
+                        "p",
+                        { key: index, staticClass: "text-red-600" },
+                        [_vm._v(_vm._s(error))]
+                      )
+                    })
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "space-y-2" },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.form.email,
+                          expression: "form.email"
+                        }
+                      ],
+                      staticClass:
+                        "w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out",
+                      attrs: {
+                        type: "text",
+                        placeholder: "Dirección de correo electrónico"
+                      },
+                      domProps: { value: _vm.form.email },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.form, "email", $event.target.value)
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _vm._l(_vm.validationErrors.email, function(error, index) {
+                      return _c(
+                        "p",
+                        { key: index, staticClass: "text-red-600" },
+                        [_vm._v(_vm._s(error))]
+                      )
+                    })
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "space-y-2" },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.form.password,
+                          expression: "form.password"
+                        }
+                      ],
+                      staticClass:
+                        "w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out",
+                      attrs: {
+                        type: "password",
+                        placeholder: "Contraseña de usuario"
+                      },
+                      domProps: { value: _vm.form.password },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.form, "password", $event.target.value)
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _vm._l(_vm.validationErrors.password, function(
+                      error,
+                      index
+                    ) {
+                      return _c(
+                        "p",
+                        { key: index, staticClass: "text-red-600" },
+                        [_vm._v(_vm._s(error))]
+                      )
+                    })
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "space-y-2" }, [
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.form.password,
-                        expression: "form.password"
+                        value: _vm.form.password_confirmation,
+                        expression: "form.password_confirmation"
                       }
                     ],
                     staticClass:
                       "w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out",
                     attrs: {
                       type: "password",
-                      placeholder: "Contraseña de usuario"
+                      placeholder: "Confirmación de contraseña"
                     },
-                    domProps: { value: _vm.form.password },
+                    domProps: { value: _vm.form.password_confirmation },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(_vm.form, "password", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _vm._l(_vm.validationErrors.password, function(error, index) {
-                    return _c(
-                      "p",
-                      { key: index, staticClass: "text-red-600" },
-                      [_vm._v(_vm._s(error))]
-                    )
-                  })
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _c("div", { staticClass: "space-y-2" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.password_confirmation,
-                      expression: "form.password_confirmation"
-                    }
-                  ],
-                  staticClass:
-                    "w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out",
-                  attrs: {
-                    type: "password",
-                    placeholder: "Confirmación de contraseña"
-                  },
-                  domProps: { value: _vm.form.password_confirmation },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.$set(
-                        _vm.form,
-                        "password_confirmation",
-                        $event.target.value
-                      )
-                    }
-                  }
-                })
-              ]),
-              _vm._v(" "),
-              _vm.generalError
-                ? _c("p", { staticClass: "text-red-600" }, [
-                    _vm._v(_vm._s(_vm.generalError))
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass:
-                    "w-full btn-outlined btn-outlined-orange font-semibold text-center px-3 py-2",
-                  attrs: { disabled: _vm.loading, type: "submit" }
-                },
-                [
-                  _vm.loading
-                    ? [
-                        _c("span", {
-                          staticClass: "spinner spinner-disabled w-6 h-6 mx-2"
-                        })
-                      ]
-                    : [
-                        _vm._v(
-                          "\n                    Registrarse\n                "
+                        _vm.$set(
+                          _vm.form,
+                          "password_confirmation",
+                          $event.target.value
                         )
-                      ]
-                ],
-                2
-              )
-            ]
-          )
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _vm.generalError
+                  ? _c("p", { staticClass: "text-red-600" }, [
+                      _vm._v(_vm._s(_vm.generalError))
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "w-full btn-outlined btn-outlined-orange font-semibold text-center px-3 py-2",
+                    attrs: { disabled: _vm.loading, type: "submit" }
+                  },
+                  [
+                    _vm.loading
+                      ? [
+                          _c("span", {
+                            staticClass: "spinner spinner-disabled w-6 h-6 mx-2"
+                          })
+                        ]
+                      : [
+                          _vm._v(
+                            "\n                        Registrarse\n                    "
+                          )
+                        ]
+                  ],
+                  2
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "p",
+              { staticClass: "text-orange-500 text-sm mt-2" },
+              [
+                _vm._v("¿Ya posee cuenta? "),
+                _c(
+                  "router-link",
+                  {
+                    staticClass:
+                      "text-orange-400 hover:text-orange-500 focus:text-orange-500 transition duration-300 ease-in-out",
+                    attrs: { to: { name: "login" } }
+                  },
+                  [_vm._v("Inicie sesión")]
+                )
+              ],
+              1
+            )
+          ])
         ]
       )
     ]
