@@ -16,7 +16,7 @@ class ProductController extends Controller
             $request->input('s', '')
         ).'%');
         if($request->input('sort'))
-            $list = $list->orderBy($request->input('sort'), (bool) $request->input('sortd', false)?'desc':'asc');
+            $list = $list->orderBy($request->input('sort'), $request->input('sortd')=='true'?'desc':'asc');
         $page = (int) $request->input('p', 0);
         $count = $list->count();
         return ['data' => ProductResource::collection($list->skip($page*10)->take(10)->get()), 'total' => $count, 'n_pages' => ceil($count/10), 'current_page' => $page];
