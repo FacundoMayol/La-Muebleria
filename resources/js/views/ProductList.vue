@@ -41,7 +41,16 @@
             <div class="lg:col-span-4 px-4 sm:px-0">
                 <div class="flex items-baseline flex-wrap" v-if="filtered">
                     <span class="text-sm tracking-tight font-bold">Filtrado por:</span>
-                    <FilterItem v-if="searchQuery" @close="searchC=''" category="Búsqueda" :value="search"/>
+                    <FilterItem v-if="searchQuery" @close="searchC=''" category="Búsqueda">
+                        {{ searchC }}
+                    </FilterItem>
+                    <FilterItem v-if="sortC" @close="sortC=null" category="Ordenar por">
+                        {{ sortC }}
+                    </FilterItem>
+                    <FilterItem v-if="sortC&&sortDescC" @close="sortDescC=false" category="Ordenar en descenso">
+                        <span v-if="sortDescC">Sí</span>
+                        <span v-else>No</span>
+                    </FilterItem>
                 </div>
                 <div class="flex items-center">
                     <h3 class="flex-grow text-sm md:text-base font-bold uppercase tracking-tighter">
@@ -70,8 +79,8 @@
                                         <TableHeaderSortableItem 
                                         v-for="(column, index) in columns" 
                                         :key="index" 
-                                        @selected="selectSort(index)"
-                                        @order="orderRows(index)" 
+                                        @selected="sortC=column.name"
+                                        @order="sortDescC=!sortDescC" 
                                         :desc="sort==column.name?sortDesc:true" 
                                         :selected="sort==column.name">
                                             {{ column.title }}
@@ -166,7 +175,7 @@ export default {
     },
     computed: {
         filtered: function () {
-            return this.searchQuery?true:false
+            return this.searchQuery||this.sortQuery||this.sortDescQuery
         },
         pageC: {
             get: function () {
@@ -187,6 +196,25 @@ export default {
                     this.page = 0
                     this.updateQueryDebounced()
                 }
+            }
+        },
+        sortC: {
+            get: function () {
+                return this.sort
+            },
+            set: function (newValue) {
+                this.sort = newValue
+                this.sortDesc = true
+                this.updateQueryDebounced()
+            }
+        },
+        sortDescC: {
+            get: function () {
+                return this.sortDesc
+            },
+            set: function (newValue) {
+                this.sortDesc = newValue
+                this.updateQueryDebounced()
             }
         }
     },
@@ -215,10 +243,11 @@ export default {
                 query.s = this.search 
             if(this.page)
                 query.p = this.page
-            if(this.sort)
+            if(this.sort){
                 query.sort = this.sort
-            if(this.sortDesc)
-                query.sortd = this.sortDesc
+                if(this.sortDesc)
+                    query.sortd = this.sortDesc
+            }
             this.$router.push({ query })
         },
         fetchData: async function () {
@@ -229,10 +258,11 @@ export default {
                     params.s = this.search 
                 if(this.page)
                     params.p = this.page
-                if(this.sort)
+                if(this.sort){
                     params.sort = this.sort
-                if(this.sortDesc)
-                    params.sortd = this.sortDesc
+                    if(this.sortDesc)
+                        params.sortd = this.sortDesc
+                }
                 const data = (await axios.get('/api/products', {
                     params
                 })).data
@@ -285,15 +315,6 @@ export default {
                     text: tempError + ' (' + e.message + ')'
                 });
             }
-        },
-        selectSort: function (column) {
-            this.sort = this.columns[column].name
-            this.sortDesc = true
-            this.updateQueryDebounced()
-        },
-        orderRows: function (column) {
-            this.sortDesc = !this.sortDesc
-            this.updateQueryDebounced()
         }
     },
     components: {

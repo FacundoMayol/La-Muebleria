@@ -131,6 +131,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -195,7 +204,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: {
     filtered: function filtered() {
-      return this.searchQuery ? true : false;
+      return this.searchQuery || this.sortQuery || this.sortDescQuery;
     },
     pageC: {
       get: function get() {
@@ -217,6 +226,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.page = 0;
           this.updateQueryDebounced();
         }
+      }
+    },
+    sortC: {
+      get: function get() {
+        return this.sort;
+      },
+      set: function set(newValue) {
+        this.sort = newValue;
+        this.sortDesc = true;
+        this.updateQueryDebounced();
+      }
+    },
+    sortDescC: {
+      get: function get() {
+        return this.sortDesc;
+      },
+      set: function set(newValue) {
+        this.sortDesc = newValue;
+        this.updateQueryDebounced();
       }
     }
   },
@@ -242,8 +270,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var query = {};
       if (this.search) query.s = this.search;
       if (this.page) query.p = this.page;
-      if (this.sort) query.sort = this.sort;
-      if (this.sortDesc) query.sortd = this.sortDesc;
+
+      if (this.sort) {
+        query.sort = this.sort;
+        if (this.sortDesc) query.sortd = this.sortDesc;
+      }
+
       this.$router.push({
         query: query
       });
@@ -260,23 +292,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 params = {};
                 if (this.search) params.s = this.search;
                 if (this.page) params.p = this.page;
-                if (this.sort) params.sort = this.sort;
-                if (this.sortDesc) params.sortd = this.sortDesc;
-                _context.next = 9;
+
+                if (this.sort) {
+                  params.sort = this.sort;
+                  if (this.sortDesc) params.sortd = this.sortDesc;
+                }
+
+                _context.next = 8;
                 return axios.get('/api/products', {
                   params: params
                 });
 
-              case 9:
+              case 8:
                 data = _context.sent.data;
                 this.items = data.data;
                 this.totalItems = data.total;
                 this.nPages = data.n_pages;
-                _context.next = 20;
+                _context.next = 19;
                 break;
 
-              case 15:
-                _context.prev = 15;
+              case 14:
+                _context.prev = 14;
                 _context.t0 = _context["catch"](1);
                 tempError = "";
 
@@ -290,17 +326,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 this.error = tempError + " (" + _context.t0.message + ")";
 
-              case 20:
-                _context.prev = 20;
+              case 19:
+                _context.prev = 19;
                 this.loading = false;
-                return _context.finish(20);
+                return _context.finish(19);
 
-              case 23:
+              case 22:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 15, 20, 23]]);
+        }, _callee, this, [[1, 14, 19, 22]]);
       }));
 
       function fetchData() {
@@ -364,16 +400,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       return addToCart;
-    }(),
-    selectSort: function selectSort(column) {
-      this.sort = this.columns[column].name;
-      this.sortDesc = true;
-      this.updateQueryDebounced();
-    },
-    orderRows: function orderRows(column) {
-      this.sortDesc = !this.sortDesc;
-      this.updateQueryDebounced();
-    }
+    }()
   }),
   components: {
     TitleBanner: _components_TheTitleBanner__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -515,8 +542,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    category: String,
-    value: String
+    category: String
   }
 });
 
@@ -1127,14 +1153,64 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _vm.searchQuery
-                        ? _c("FilterItem", {
-                            attrs: { category: "Búsqueda", value: _vm.search },
-                            on: {
-                              close: function($event) {
-                                _vm.searchC = ""
+                        ? _c(
+                            "FilterItem",
+                            {
+                              attrs: { category: "Búsqueda" },
+                              on: {
+                                close: function($event) {
+                                  _vm.searchC = ""
+                                }
                               }
-                            }
-                          })
+                            },
+                            [
+                              _vm._v(
+                                "\n                    " +
+                                  _vm._s(_vm.searchC) +
+                                  "\n                "
+                              )
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.sortC
+                        ? _c(
+                            "FilterItem",
+                            {
+                              attrs: { category: "Ordenar por" },
+                              on: {
+                                close: function($event) {
+                                  _vm.sortC = null
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                    " +
+                                  _vm._s(_vm.sortC) +
+                                  "\n                "
+                              )
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.sortC && _vm.sortDescC
+                        ? _c(
+                            "FilterItem",
+                            {
+                              attrs: { category: "Ordenar en descenso" },
+                              on: {
+                                close: function($event) {
+                                  _vm.sortDescC = false
+                                }
+                              }
+                            },
+                            [
+                              _vm.sortDescC
+                                ? _c("span", [_vm._v("Sí")])
+                                : _c("span", [_vm._v("No")])
+                            ]
+                          )
                         : _vm._e()
                     ],
                     1
@@ -1273,10 +1349,10 @@ var render = function() {
                                           },
                                           on: {
                                             selected: function($event) {
-                                              return _vm.selectSort(index)
+                                              _vm.sortC = column.name
                                             },
                                             order: function($event) {
-                                              return _vm.orderRows(index)
+                                              _vm.sortDescC = !_vm.sortDescC
                                             }
                                           }
                                         },
@@ -1577,14 +1653,14 @@ var render = function() {
         }
       },
       [
-        _vm._v(_vm._s(_vm.value)),
+        _vm._t("default"),
         _c("font-awesome-icon", {
           staticClass:
             "ml-2 text-sm transition duration-300 ease-in-out group-hover:text-orange-400 group-focus:text-orange-400",
           attrs: { icon: "times" }
         })
       ],
-      1
+      2
     )
   ])
 }
