@@ -3,7 +3,7 @@
         <TitleBanner>Búsqueda</TitleBanner>
         <div class="container mx-auto p-5">
             <div class="flex mb-3">
-                <input v-model="search" class="flex-1 mx-2 p-2 bg-gray-100 border-gray-400 placeholder-gray-600 text-gray-700 rounded-md border" placeholder="Búsqueda">
+                <input v-model="searchC" class="flex-1 mx-2 p-2 bg-gray-100 border-gray-400 placeholder-gray-600 text-gray-700 rounded-md border" placeholder="Búsqueda">
             </div>
             <div>
                 <h3 class="text-sm md:text-base font-bold uppercase tracking-tighter">
@@ -27,7 +27,7 @@
                         <SearchRowItem v-for="(item, index) in items" :key="index" :to="{ name: 'product', params: { productId: item.id } }" :product="item" @add="addToCart(item)"/>
                     </div>
                     <div class="mt-4 flex justify-center items-center">
-                        <PaginationItem v-model="page" :pages="nPages"/>
+                        <PaginationItem v-model="pageC" :pages="nPages"/>
                     </div>
                 </div>
             </transition>
@@ -68,6 +68,29 @@ export default {
         this.fetchData()
         this.updateQueryDebounced = _.debounce(this.updateQuery, 500)
     },
+    computed: {
+        pageC: {
+            get: function () {
+                return this.page
+            },
+            set: function (newValue) {
+                this.page = newValue
+                this.updateQueryDebounced()
+            }
+        },
+        searchC: {
+            get: function () {
+                return this.search
+            },
+            set: function (newValue) {
+                this.search = newValue
+                if(this.searchQuery !== newValue){
+                    this.page = 0
+                    this.updateQueryDebounced()
+                }
+            }
+        }
+    },
     watch: {
         $route: function () {
             this.page = this.pageQuery
@@ -77,15 +100,6 @@ export default {
             this.items = []
             this.error = null
             this.fetchData()
-        },
-        page: function () {
-            this.updateQueryDebounced()
-        },
-        search: function () {
-            if(this.searchQuery !== this.search){
-                this.page = 0
-                this.updateQueryDebounced()
-            }
         }
     },
     methods: {
@@ -93,16 +107,23 @@ export default {
             addToCartAction: 'addToCart'
         }),
         updateQuery: function () {
-            this.$router.push({ query: { s: this.search, p: this.page } })
+            var query = {}
+            if(this.search)
+                query.s = this.search 
+            if(this.page)
+                query.p = this.page
+            this.$router.push({ query })
         },
         fetchData: async function () {
             this.loading = true
             try {
+                var params = {}
+                if(this.search)
+                    params.s = this.search 
+                if(this.page)
+                    params.p = this.page
                 const data = (await axios.get('/api/products', {
-                    params: {
-                        s: this.searchQuery,
-                        p: this.page
-                    }
+                    params
                 })).data
                 this.items = data.data
                 this.nPages = data.n_pages

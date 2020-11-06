@@ -94,6 +94,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.fetchData();
     this.updateQueryDebounced = _.debounce(this.updateQuery, 500);
   },
+  computed: {
+    pageC: {
+      get: function get() {
+        return this.page;
+      },
+      set: function set(newValue) {
+        this.page = newValue;
+        this.updateQueryDebounced();
+      }
+    },
+    searchC: {
+      get: function get() {
+        return this.search;
+      },
+      set: function set(newValue) {
+        this.search = newValue;
+
+        if (this.searchQuery !== newValue) {
+          this.page = 0;
+          this.updateQueryDebounced();
+        }
+      }
+    }
+  },
   watch: {
     $route: function $route() {
       this.page = this.pageQuery;
@@ -103,55 +127,46 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.items = [];
       this.error = null;
       this.fetchData();
-    },
-    page: function page() {
-      this.updateQueryDebounced();
-    },
-    search: function search() {
-      if (this.searchQuery !== this.search) {
-        this.page = 0;
-        this.updateQueryDebounced();
-      }
     }
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])('cart', {
     addToCartAction: 'addToCart'
   })), {}, {
     updateQuery: function updateQuery() {
+      var query = {};
+      if (this.search) query.s = this.search;
+      if (this.page) query.p = this.page;
       this.$router.push({
-        query: {
-          s: this.search,
-          p: this.page
-        }
+        query: query
       });
     },
     fetchData: function () {
       var _fetchData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var data, tempError;
+        var params, data, tempError;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 this.loading = true;
                 _context.prev = 1;
-                _context.next = 4;
+                params = {};
+                if (this.search) params.s = this.search;
+                if (this.page) params.p = this.page;
+                _context.next = 7;
                 return axios.get('/api/products', {
-                  params: {
-                    s: this.searchQuery,
-                    p: this.page
-                  }
+                  params: params
                 });
 
-              case 4:
+              case 7:
                 data = _context.sent.data;
                 this.items = data.data;
                 this.nPages = data.n_pages;
                 this.totalItems = data.total;
-                _context.next = 15;
+                _context.next = 18;
                 break;
 
-              case 10:
-                _context.prev = 10;
+              case 13:
+                _context.prev = 13;
                 _context.t0 = _context["catch"](1);
                 tempError = "";
 
@@ -165,17 +180,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 this.error = tempError + " (" + _context.t0.message + ")";
 
-              case 15:
-                _context.prev = 15;
-                this.loading = false;
-                return _context.finish(15);
-
               case 18:
+                _context.prev = 18;
+                this.loading = false;
+                return _context.finish(18);
+
+              case 21:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 10, 15, 18]]);
+        }, _callee, this, [[1, 13, 18, 21]]);
       }));
 
       function fetchData() {
@@ -384,20 +399,20 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.search,
-                  expression: "search"
+                  value: _vm.searchC,
+                  expression: "searchC"
                 }
               ],
               staticClass:
                 "flex-1 mx-2 p-2 bg-gray-100 border-gray-400 placeholder-gray-600 text-gray-700 rounded-md border",
               attrs: { placeholder: "Búsqueda" },
-              domProps: { value: _vm.search },
+              domProps: { value: _vm.searchC },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.search = $event.target.value
+                  _vm.searchC = $event.target.value
                 }
               }
             })
@@ -505,11 +520,11 @@ var render = function() {
                       _c("PaginationItem", {
                         attrs: { pages: _vm.nPages },
                         model: {
-                          value: _vm.page,
+                          value: _vm.pageC,
                           callback: function($$v) {
-                            _vm.page = $$v
+                            _vm.pageC = $$v
                           },
-                          expression: "page"
+                          expression: "pageC"
                         }
                       })
                     ],

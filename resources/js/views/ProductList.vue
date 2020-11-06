@@ -41,7 +41,7 @@
             <div class="lg:col-span-4 px-4 sm:px-0">
                 <div class="flex items-baseline flex-wrap" v-if="filtered">
                     <span class="text-sm tracking-tight font-bold">Filtrado por:</span>
-                    <FilterItem v-if="searchQuery" @close="search=''" category="Búsqueda" :value="search"/>
+                    <FilterItem v-if="searchQuery" @close="searchC=''" category="Búsqueda" :value="search"/>
                 </div>
                 <div class="flex items-center">
                     <h3 class="flex-grow text-sm md:text-base font-bold uppercase tracking-tighter">
@@ -49,7 +49,7 @@
                     </h3>
                     <div class="flex items-center">
                         <font-awesome-icon class="mx-2" icon="search"></font-awesome-icon>
-                        <input class="text-xs border rounded-md border-gray-500 placeholder-gray-500 text-gray-700 py-1 px-2" type="text" v-model="search" placeholder="Buscar en categoría">
+                        <input class="text-xs border rounded-md border-gray-500 placeholder-gray-500 text-gray-700 py-1 px-2" type="text" v-model="searchC" placeholder="Buscar en categoría">
                     </div>
                 </div>
                 <hr class="border-gray-500 my-2">
@@ -67,7 +67,15 @@
                                 <thead>
                                     <tr class="text-left text-sm">
                                         <TableHeaderItem class="text-center">Imágen</TableHeaderItem>
-                                        <TableHeaderSortableItem v-for="(column, index) in columns" :key="index" @sort="sortRows(index)" :value="sortQuery==column.name?sortDescQuery:false" :selected="sortQuery==column.name">{{ column.title }}</TableHeaderSortableItem>
+                                        <TableHeaderSortableItem 
+                                        v-for="(column, index) in columns" 
+                                        :key="index" 
+                                        @selected="selectSort(index)"
+                                        @order="orderRows(index)" 
+                                        :desc="sort==column.name?sortDesc:true" 
+                                        :selected="sort==column.name">
+                                            {{ column.title }}
+                                        </TableHeaderSortableItem>
                                         <TableHeaderItem class="text-center">Acciones</TableHeaderItem>
                                     </tr>
                                 </thead>
@@ -77,7 +85,7 @@
                             </table>
                         </div>
                         <div class="mt-4 flex justify-center items-center">
-                            <PaginationItem v-model="paginator.page" :pages="paginator.nPages"/>
+                            <PaginationItem v-model="pageC" :pages="nPages"/>
                         </div>
                     </div>
                 </transition>
@@ -121,17 +129,15 @@ export default {
         },
         sortDescQuery: {
             type: Boolean,
-            default: false
+            default: true
         }
     },
     data () {
         return {
             showFilters: false,
             loading: true,
-            paginator: {
-                page: this.pageQuery,
-                nPages: 0
-            },
+            page: this.pageQuery,
+            nPages: 0,
             search: this.searchQuery,
             items: [],
             totalItems: 0,
@@ -161,6 +167,27 @@ export default {
     computed: {
         filtered: function () {
             return this.searchQuery?true:false
+        },
+        pageC: {
+            get: function () {
+                return this.page
+            },
+            set: function (newValue) {
+                this.page = newValue
+                this.updateQueryDebounced()
+            }
+        },
+        searchC: {
+            get: function () {
+                return this.search
+            },
+            set: function (newValue) {
+                this.search = newValue
+                if(this.searchQuery !== newValue){
+                    this.page = 0
+                    this.updateQueryDebounced()
+                }
+            }
         }
     },
     created () {
@@ -169,28 +196,13 @@ export default {
     },
     watch: {
         $route: function () {
-            this.paginator.page = this.pageQuery
-            this.paginator.nPages = 0
+            this.page = this.pageQuery
+            this.nPages = 0
             this.search = this.searchQuery
             this.items = []
             this.totalItems = 0
             this.error = null
             this.fetchData()
-        },
-        'paginator.page': function () {
-            this.updateQueryDebounced()
-        },
-        search: function () {
-            if(this.$route.query.s !== this.search){
-                this.paginator.page = 0
-                this.updateQueryDebounced()
-            }
-        },
-        sort: function () {
-            this.updateQueryDebounced()
-        },
-        sortDesc: function () {
-            this.updateQueryDebounced()
         }
     },
     methods: {
@@ -198,22 +210,35 @@ export default {
             addToCartAction: 'addToCart'
         }),
         updateQuery: function () {
-            this.$router.push({ query: { s: this.search, p: this.paginator.page, sort: this.sort, sortd: this.sortDesc } })
+            var query = {}
+            if(this.search)
+                query.s = this.search 
+            if(this.page)
+                query.p = this.page
+            if(this.sort)
+                query.sort = this.sort
+            if(this.sortDesc)
+                query.sortd = this.sortDesc
+            this.$router.push({ query })
         },
         fetchData: async function () {
             this.loading = true
             try {
+                var params = {}
+                if(this.search)
+                    params.s = this.search 
+                if(this.page)
+                    params.p = this.page
+                if(this.sort)
+                    params.sort = this.sort
+                if(this.sortDesc)
+                    params.sortd = this.sortDesc
                 const data = (await axios.get('/api/products', {
-                    params: {
-                        s: this.search,
-                        p: this.paginator.page,
-                        sort: this.sort,
-                        sortd: this.sortDesc
-                    }
+                    params
                 })).data
                 this.items = data.data
                 this.totalItems = data.total
-                this.paginator.nPages = data.n_pages
+                this.nPages = data.n_pages
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
@@ -261,13 +286,14 @@ export default {
                 });
             }
         },
-        sortRows: function (column) {
-            if(this.sort != this.columns[column].name){
-                this.sortDesc = false
-                this.sort = this.columns[column].name
-            }else{
-                this.sortDesc = !this.sortDesc
-            }
+        selectSort: function (column) {
+            this.sort = this.columns[column].name
+            this.sortDesc = true
+            this.updateQueryDebounced()
+        },
+        orderRows: function (column) {
+            this.sortDesc = !this.sortDesc
+            this.updateQueryDebounced()
         }
     },
     components: {

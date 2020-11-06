@@ -123,6 +123,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -155,17 +163,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     sortDescQuery: {
       type: Boolean,
-      "default": false
+      "default": true
     }
   },
   data: function data() {
     return {
       showFilters: false,
       loading: true,
-      paginator: {
-        page: this.pageQuery,
-        nPages: 0
-      },
+      page: this.pageQuery,
+      nPages: 0,
       search: this.searchQuery,
       items: [],
       totalItems: 0,
@@ -190,6 +196,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   computed: {
     filtered: function filtered() {
       return this.searchQuery ? true : false;
+    },
+    pageC: {
+      get: function get() {
+        return this.page;
+      },
+      set: function set(newValue) {
+        this.page = newValue;
+        this.updateQueryDebounced();
+      }
+    },
+    searchC: {
+      get: function get() {
+        return this.search;
+      },
+      set: function set(newValue) {
+        this.search = newValue;
+
+        if (this.searchQuery !== newValue) {
+          this.page = 0;
+          this.updateQueryDebounced();
+        }
+      }
     }
   },
   created: function created() {
@@ -198,72 +226,57 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   watch: {
     $route: function $route() {
-      this.paginator.page = this.pageQuery;
-      this.paginator.nPages = 0;
+      this.page = this.pageQuery;
+      this.nPages = 0;
       this.search = this.searchQuery;
       this.items = [];
       this.totalItems = 0;
       this.error = null;
       this.fetchData();
-    },
-    'paginator.page': function paginatorPage() {
-      this.updateQueryDebounced();
-    },
-    search: function search() {
-      if (this.$route.query.s !== this.search) {
-        this.paginator.page = 0;
-        this.updateQueryDebounced();
-      }
-    },
-    sort: function sort() {
-      this.updateQueryDebounced();
-    },
-    sortDesc: function sortDesc() {
-      this.updateQueryDebounced();
     }
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])('cart', {
     addToCartAction: 'addToCart'
   })), {}, {
     updateQuery: function updateQuery() {
+      var query = {};
+      if (this.search) query.s = this.search;
+      if (this.page) query.p = this.page;
+      if (this.sort) query.sort = this.sort;
+      if (this.sortDesc) query.sortd = this.sortDesc;
       this.$router.push({
-        query: {
-          s: this.search,
-          p: this.paginator.page,
-          sort: this.sort,
-          sortd: this.sortDesc
-        }
+        query: query
       });
     },
     fetchData: function () {
       var _fetchData = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var data, tempError;
+        var params, data, tempError;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 this.loading = true;
                 _context.prev = 1;
-                _context.next = 4;
+                params = {};
+                if (this.search) params.s = this.search;
+                if (this.page) params.p = this.page;
+                if (this.sort) params.sort = this.sort;
+                if (this.sortDesc) params.sortd = this.sortDesc;
+                _context.next = 9;
                 return axios.get('/api/products', {
-                  params: {
-                    s: this.search,
-                    p: this.paginator.page,
-                    sort: this.sort,
-                    sortd: this.sortDesc
-                  }
+                  params: params
                 });
 
-              case 4:
+              case 9:
                 data = _context.sent.data;
                 this.items = data.data;
                 this.totalItems = data.total;
-                this.paginator.nPages = data.n_pages;
-                _context.next = 15;
+                this.nPages = data.n_pages;
+                _context.next = 20;
                 break;
 
-              case 10:
-                _context.prev = 10;
+              case 15:
+                _context.prev = 15;
                 _context.t0 = _context["catch"](1);
                 tempError = "";
 
@@ -277,17 +290,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 this.error = tempError + " (" + _context.t0.message + ")";
 
-              case 15:
-                _context.prev = 15;
+              case 20:
+                _context.prev = 20;
                 this.loading = false;
-                return _context.finish(15);
+                return _context.finish(20);
 
-              case 18:
+              case 23:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 10, 15, 18]]);
+        }, _callee, this, [[1, 15, 20, 23]]);
       }));
 
       function fetchData() {
@@ -352,13 +365,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       return addToCart;
     }(),
-    sortRows: function sortRows(column) {
-      if (this.sort != this.columns[column].name) {
-        this.sortDesc = false;
-        this.sort = this.columns[column].name;
-      } else {
-        this.sortDesc = !this.sortDesc;
-      }
+    selectSort: function selectSort(column) {
+      this.sort = this.columns[column].name;
+      this.sortDesc = true;
+      this.updateQueryDebounced();
+    },
+    orderRows: function orderRows(column) {
+      this.sortDesc = !this.sortDesc;
+      this.updateQueryDebounced();
     }
   }),
   components: {
@@ -705,13 +719,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    value: {
+    desc: {
       type: Boolean,
-      "default": false
+      "default": true
     },
     selected: {
       type: Boolean,
       "default": false
+    }
+  },
+  methods: {
+    handle: function handle() {
+      if (!this.selected) this.$emit('selected');else this.$emit('order');
     }
   }
 });
@@ -1112,7 +1131,7 @@ var render = function() {
                             attrs: { category: "Búsqueda", value: _vm.search },
                             on: {
                               close: function($event) {
-                                _vm.search = ""
+                                _vm.searchC = ""
                               }
                             }
                           })
@@ -1160,8 +1179,8 @@ var render = function() {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.search,
-                          expression: "search"
+                          value: _vm.searchC,
+                          expression: "searchC"
                         }
                       ],
                       staticClass:
@@ -1170,13 +1189,13 @@ var render = function() {
                         type: "text",
                         placeholder: "Buscar en categoría"
                       },
-                      domProps: { value: _vm.search },
+                      domProps: { value: _vm.searchC },
                       on: {
                         input: function($event) {
                           if ($event.target.composing) {
                             return
                           }
-                          _vm.search = $event.target.value
+                          _vm.searchC = $event.target.value
                         }
                       }
                     })
@@ -1246,20 +1265,28 @@ var render = function() {
                                         {
                                           key: index,
                                           attrs: {
-                                            value:
-                                              _vm.sortQuery == column.name
-                                                ? _vm.sortDescQuery
-                                                : false,
-                                            selected:
-                                              _vm.sortQuery == column.name
+                                            desc:
+                                              _vm.sort == column.name
+                                                ? _vm.sortDesc
+                                                : true,
+                                            selected: _vm.sort == column.name
                                           },
                                           on: {
-                                            sort: function($event) {
-                                              return _vm.sortRows(index)
+                                            selected: function($event) {
+                                              return _vm.selectSort(index)
+                                            },
+                                            order: function($event) {
+                                              return _vm.orderRows(index)
                                             }
                                           }
                                         },
-                                        [_vm._v(_vm._s(column.title))]
+                                        [
+                                          _vm._v(
+                                            "\n                                        " +
+                                              _vm._s(column.title) +
+                                              "\n                                    "
+                                          )
+                                        ]
                                       )
                                     }),
                                     _vm._v(" "),
@@ -1307,13 +1334,13 @@ var render = function() {
                         },
                         [
                           _c("PaginationItem", {
-                            attrs: { pages: _vm.paginator.nPages },
+                            attrs: { pages: _vm.nPages },
                             model: {
-                              value: _vm.paginator.page,
+                              value: _vm.pageC,
                               callback: function($$v) {
-                                _vm.$set(_vm.paginator, "page", $$v)
+                                _vm.pageC = $$v
                               },
-                              expression: "paginator.page"
+                              expression: "pageC"
                             }
                           })
                         ],
@@ -1778,11 +1805,7 @@ var render = function() {
       staticClass:
         "px-2 py-1 group cursor-pointer border-b border-gray-500 hover:border-orange-500 select-none whitespace-no-wrap font-medium",
       class: _vm.selected ? "border-orange-500" : "",
-      on: {
-        click: function($event) {
-          return _vm.$emit("sort", !_vm.value)
-        }
-      }
+      on: { click: _vm.handle }
     },
     [
       _c("font-awesome-icon", {
@@ -1790,7 +1813,7 @@ var render = function() {
           "group-hover:text-orange-500 group-focus:text-orange-500 transform transition-transform duration-300 ease-in-out mr-1",
         class: {
           "text-orange-500": _vm.selected,
-          "rotate-180": _vm.value
+          "rotate-180": !_vm.desc
         },
         attrs: { icon: "angle-down" }
       }),
