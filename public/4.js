@@ -28,9 +28,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -99,57 +96,41 @@ var render = function() {
         [
           _c("ProductItem", {
             attrs: {
-              product: "case",
-              title: "Gabinetes",
-              image: "/images/case.png"
-            }
-          }),
-          _vm._v(" "),
-          _c("ProductItem", {
-            attrs: { product: "CPU", title: "CPUs", image: "/images/CPU.png" }
-          }),
-          _vm._v(" "),
-          _c("ProductItem", {
-            attrs: { product: "GPU", title: "GPUs", image: "/images/GPU.png" }
-          }),
-          _vm._v(" "),
-          _c("ProductItem", {
-            attrs: {
-              product: "motherboard",
-              title: "Placas madre",
-              image: "/images/motherboard.png"
+              product: "chairs",
+              title: "Sillas",
+              image: "/images/chair.png"
             }
           }),
           _vm._v(" "),
           _c("ProductItem", {
             attrs: {
-              product: "RAM",
-              title: "Memorias RAM",
-              image: "/images/RAM.png"
+              product: "tables",
+              title: "Mesas",
+              image: "/images/table.png"
             }
           }),
           _vm._v(" "),
           _c("ProductItem", {
             attrs: {
-              product: "storage",
-              title: "Unidades de almacenamiento",
-              image: "/images/SSD.png"
+              product: "desks",
+              title: "Escritorios",
+              image: "/images/desk.png"
             }
           }),
           _vm._v(" "),
           _c("ProductItem", {
             attrs: {
-              product: "PSU",
-              title: "Fuentes de alimentación",
-              image: "/images/PSU.png"
+              product: "armchairs",
+              title: "Sillones",
+              image: "/images/armchair.png"
             }
           }),
           _vm._v(" "),
           _c("ProductItem", {
             attrs: {
-              product: "cooler",
-              title: "Refrigeración",
-              image: "/images/cooler.png"
+              product: "bookshelfs",
+              title: "Bibliotecas",
+              image: "/images/bookshelf.png"
             }
           })
         ],

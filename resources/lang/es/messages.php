@@ -7,5 +7,6 @@ return [
     'logout_success' => 'Cierre de sesión exitoso.',
     'invalid_cart_key' => 'Llave de carrito incorrecta.',
     'rating_created' => 'Reseña creada exitosamente.',
-    'rating_destroyed' => 'Reseña eliminada exitosamente.'
+    'rating_destroyed' => 'Reseña eliminada exitosamente.',
+    'message_create_success' => 'Mensaje recibido correctamente'
 ];

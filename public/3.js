@@ -319,7 +319,7 @@ __webpack_require__.r(__webpack_exports__);
       type: Object,
       validator: function validator(value) {
         var product = value.product;
-        return (!_.has(product, 'image') || _.isString(product.image) || _.isNull(product.image)) && _.isString(product.price) && _.isString(product.name) && !isNaN(value.quantity) && !isNaN(parseInt(value.quantity));
+        return (!_.has(product, 'thumbnail') || _.isString(product.thumbnail) || _.isNull(product.thumbnail)) && _.isString(product.price) && _.isString(product.name) && !isNaN(value.quantity) && !isNaN(parseInt(value.quantity));
       }
     },
     disabled: {
@@ -540,12 +540,12 @@ var render = function() {
             "text-center w-20 md:w-24 hover:relative hover:z-10 flex-shrink-0 rounded-sm border bg-white transition-transform duration-150 ease-in-out transform hover:scale-150 cursor-pointer"
         },
         [
-          _vm.value.product.image
+          _vm.value.product.thumbnail
             ? [
                 _c("img", {
                   staticClass: "block w-full h-auto",
                   attrs: {
-                    src: "/storage/components/" + _vm.value.product.image
+                    src: "/storage/products/" + _vm.value.product.thumbnail
                   }
                 })
               ]

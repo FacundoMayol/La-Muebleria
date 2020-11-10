@@ -1,4 +1,4 @@
-<template>
+<!--template>
     <div class="flex flex-1 flex-col">
         <TitleBanner>Ver producto</TitleBanner>
         <template v-if="error">
@@ -37,13 +37,13 @@
                             <span v-else class="text-orange-400 lg:mr-1">Valoración de su usuario:</span>
                             <span>
                                 <template v-if="userRating">
-                                    <span class="select-none text-xl text-orange-500" v-for="n in userRating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-userRating)" :key="n+userRating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.user_rating?product.user_rating:'0' }} <span class="text-orange-500">★</span>)</span><button @click="deleteRating" class="ml-1 text-blue-500 hover:text-blue-600 focus:text-blue-600 text-sm">Borrar reseña</button>
+                                    <span class="select-none text-xl text-orange-500" v-for="n in userRating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-userRating)" :key="n+userRating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.user_rating }} <span class="text-orange-500">★</span>)</span><button @click="deleteRating" class="ml-1 text-blue-500 hover:text-blue-600 focus:text-blue-600 text-sm">Borrar reseña</button>
                                 </template>
                                 <template v-else-if="authenticated">
-                                    <button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in rating" :key="n" @click="addRating(n)">★</button><button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in (5-rating)" :key="n+rating" @click="addRating(n+rating)">☆</button><span class="ml-1 text-sm text-orange-400">({{ product.rating?product.rating:'0' }}<span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
+                                    <button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in rating" :key="n" @click="addRating(n)">★</button><button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in (5-rating)" :key="n+rating" @click="addRating(n+rating)">☆</button><span class="ml-1 text-sm text-orange-400">({{ product.rating }}<span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
                                 </template>
                                 <template v-else>
-                                    <span class="select-none text-xl text-orange-500" v-for="n in rating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-rating)" :key="n+rating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.rating?product.rating:'0' }} <span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
+                                    <span class="select-none text-xl text-orange-500" v-for="n in rating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-rating)" :key="n+rating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.rating }} <span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
                                 </template>
                             </span>
                         </div>
@@ -271,4 +271,4 @@ export default {
         NumberSpinnerItem
     }
 }
-</script>
+</script-->

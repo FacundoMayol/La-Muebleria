@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Image as ImageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,15 +19,16 @@ class Product extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'category' => $this->category->name,
             'price' => $this->price,
             'description' => $this->description,
-            'manufacturer' => $this->manufacturer,
+            'thumbnail' => $this->thumbnail,
+            'images' => ImageResource::collection($this->images),
             'rating' => $this->ratings()->avg('rating'),
             'n_users_rating' => $this->ratings()->count(),
             'user_rating' => $this->when(Auth::check(), function () {
                 return $this->ratings()->where('user_id', Auth::id())->value('rating');
             }),
-            'image' => $this->image,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -14,7 +14,10 @@
                 <div class="flex-grow">
                     <router-link class="navbar-link" :to="{ name: 'main' }">Página principal</router-link>
                     <router-link class="navbar-link" :to="{ name: 'categories' }">Productos</router-link>
-                    <router-link class="navbar-link" :to="{ name: 'build' }">Construir</router-link>
+                    <router-link class="navbar-link" :to="{ name: 'contact' }">Contacto</router-link>
+                    <template v-if="administrator">
+                        <router-link class="navbar-link" :to="{ name: 'admin-contact' }">Administrar mensajes</router-link>
+                    </template>
                 </div>
                 <div>
                     <template v-if="authenticated">
@@ -48,7 +51,8 @@ export default {
     },
     computed: {
         ...mapGetters('auth', [
-            'authenticated'
+            'authenticated',
+            'administrator'
         ]),
         ...mapState('auth', [
             'user'

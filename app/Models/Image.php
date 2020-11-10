@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Manufacturer extends Model
+class Image extends Model
 {
     use HasFactory;
-    
+
     public $timestamps = false;
 
-    protected $guarded = [];
+    protected $fillable = ['product_id', 'image'];
 
-    public function products()
+    public function product () 
     {
-        return $this->hasMany('App\Models\Manufacturer');
+        return $this->belongsTo(Product::class);
     }
 }

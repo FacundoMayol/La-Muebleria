@@ -7,26 +7,30 @@
                 Todo
             </label>
         </div>
-        <div v-for="(item, index) in state" v-show="index<limit||showMore" :key="index">
+        <div v-for="(item, index) in options" v-show="index<limit||showMore" :key="index">
             <label class="checkbox">
-                <input type="checkbox" v-model="item.state">
+                <input type="checkbox" :value="item.value" v-model="state">
                 <span class="checkmark"></span>
                 {{ item.name?item.name:item.value }}
             </label>
         </div>
-        <button class="text-blue-500 text-sm tracking-tighter" v-if="state.length>limit" @click="showMore = !showMore">{{ showMore?'Mostrar menos':'Mostrar más' }} <font-awesome-icon class="align-middle mx-1" :icon="showMore?'angle-up':'angle-down'"></font-awesome-icon></button>
+        <button class="text-blue-500 text-sm tracking-tighter" v-if="options.length>limit" @click="showMore = !showMore">{{ showMore?'Mostrar menos':'Mostrar más' }} <font-awesome-icon class="align-middle mx-1" :icon="showMore?'angle-up':'angle-down'"></font-awesome-icon></button>
     </div>
 </template>
 
 <script>
 export default {
     props: {
-        items: {
+        value: {
+            type: Array,
+            required: true
+        },
+        options: {
             type: Array,
             required: true,
-            validator: function (items) {
-                return items.every((item) => {
-                    return _.has(item, 'state') && typeof item.state === 'boolean' && _.has(item, 'value')
+            validator: function (options) {
+                return options.every((item) => {
+                    return _.has(item, 'value') 
                 })
             }
         },
@@ -37,20 +41,20 @@ export default {
     },
     data () {
         return {
-            state: this.items,
             showMore: false
         }
     },
-    watch: {
-        state: function (items) {
-            this.$emit('update:items', items)
-        }
-    },
     computed: {
+        state: {
+            get() {
+                return this.value
+            },
+            set(value) {
+                this.$emit("input", value) 
+            }
+        },
         allChecked: function () {
-            return !this.state.some((item) => {
-                return item.state
-            })
+            return this.value.length == 0
         }
     }
 }

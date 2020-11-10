@@ -140,6 +140,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -173,6 +184,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     sortDescQuery: {
       type: Boolean,
       "default": true
+    },
+    ratingStartQuery: {
+      type: Number,
+      "default": null
+    },
+    ratingEndQuery: {
+      type: Number,
+      "default": null
+    },
+    priceStartQuery: {
+      type: Number,
+      "default": null
+    },
+    priceEndQuery: {
+      type: Number,
+      "default": null
     }
   },
   data: function data() {
@@ -187,6 +214,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       error: null,
       sort: this.sortQuery,
       sortDesc: this.sortDescQuery,
+      ratingStart: this.ratingStartQuery,
+      ratingEnd: this.ratingEndQuery,
+      priceStart: this.priceStartQuery,
+      priceEnd: this.priceEndQuery,
+      maxPrice: 100,
       columns: [{
         title: 'Nombre',
         name: 'name'
@@ -194,17 +226,35 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         title: 'Precio',
         name: 'price'
       }, {
-        title: 'Fabricante',
-        name: 'manufacturer'
-      }, {
         title: 'Rating',
         name: 'rating'
       }]
     };
   },
-  computed: {
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])('auth', ['administrator'])), {}, {
+    title: function title() {
+      switch (this.categoryParam) {
+        case 'chairs':
+          return 'Sillas';
+
+        case 'tables':
+          return 'Mesas';
+
+        case 'desks':
+          return 'Escritorios';
+
+        case 'armchairs':
+          return 'Sillones';
+
+        case 'bookshelfs':
+          return 'Bibliotecas';
+
+        default:
+          return 'Muebles';
+      }
+    },
     filtered: function filtered() {
-      return this.searchQuery || this.sortQuery || this.sortDescQuery;
+      return this.searchQuery || this.sortQuery || this.sortDescQuery || this.ratingStartQuery || this.ratingEndQuery || this.priceStartQuery || this.priceEndQuery;
     },
     pageC: {
       get: function get() {
@@ -246,11 +296,64 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.sortDesc = newValue;
         this.updateQueryDebounced();
       }
+    },
+    ratingStartC: {
+      get: function get() {
+        return this.ratingStart;
+      },
+      set: function set(newValue) {
+        this.ratingStart = newValue;
+
+        if (this.ratingStartQuery != newValue && (this.ratingStartQuery != null || newValue != 0)) {
+          this.page = 0;
+          this.updateQueryDebounced();
+        }
+      }
+    },
+    ratingEndC: {
+      get: function get() {
+        return this.ratingEnd;
+      },
+      set: function set(newValue) {
+        this.ratingEnd = newValue;
+
+        if (this.ratingEndQuery != newValue && (this.ratingEndQuery != null || newValue != 5)) {
+          this.page = 0;
+          this.updateQueryDebounced();
+        }
+      }
+    },
+    priceStartC: {
+      get: function get() {
+        return this.priceStart;
+      },
+      set: function set(newValue) {
+        this.priceStart = newValue;
+
+        if (this.priceStartQuery != newValue && (this.priceEndQuery != null || newValue != 0)) {
+          this.page = 0;
+          this.updateQueryDebounced();
+        }
+      }
+    },
+    priceEndC: {
+      get: function get() {
+        return this.priceEnd;
+      },
+      set: function set(newValue) {
+        this.priceEnd = newValue;
+
+        if (this.priceEndQuery != newValue && (this.priceEndQuery != null || newValue != this.maxPrice)) {
+          this.page = 0;
+          this.updateQueryDebounced();
+        }
+      }
     }
-  },
+  }),
   created: function created() {
-    this.fetchData();
     this.updateQueryDebounced = _.debounce(this.updateQuery, 500);
+    this.fetchData();
+    document.title = this.title + ' | KakeraGaming';
   },
   watch: {
     $route: function $route() {
@@ -260,7 +363,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.items = [];
       this.totalItems = 0;
       this.error = null;
-      this.fetchData();
+      this.sort = this.sortQuery, this.sortDesc = this.sortDescQuery, this.ratingStart = this.ratingStartQuery, this.ratingEnd = this.ratingEndQuery, this.priceStart = this.priceStartQuery, this.priceEnd = this.priceEndQuery, this.fetchData();
+      document.title = this.title + ' | KakeraGaming';
     }
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])('cart', {
@@ -276,6 +380,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (this.sortDesc) query.sortd = this.sortDesc;
       }
 
+      if (this.ratingStart && this.ratingStart != 0) query.rating_start = this.ratingStart;
+      if (this.ratingEnd && this.ratingEnd != 5) query.rating_end = this.ratingEnd;
+      if (this.priceStart && this.priceStart != 0) query.price_start = this.priceStart;
+      if (this.priceEnd && this.priceEnd != this.maxPrice) query.price_end = this.priceEnd;
       this.$router.push({
         query: query
       });
@@ -298,21 +406,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   if (this.sortDesc) params.sortd = this.sortDesc;
                 }
 
-                _context.next = 8;
-                return axios.get('/api/products', {
+                if (this.ratingStart && this.ratingStart != 0) params.rating_start = this.ratingStart;
+                if (this.ratingEnd && this.ratingEnd != 5) params.rating_end = this.ratingEnd;
+                if (this.priceStart && this.priceStart != 0) params.price_start = this.priceStart;
+                if (this.priceEnd && this.priceEnd != this.maxPrice) params.price_end = this.priceEnd;
+                _context.next = 12;
+                return axios.get('/api/category/' + this.categoryParam, {
                   params: params
                 });
 
-              case 8:
+              case 12:
                 data = _context.sent.data;
                 this.items = data.data;
                 this.totalItems = data.total;
                 this.nPages = data.n_pages;
-                _context.next = 19;
+                this.maxPrice = parseFloat(data.max_price);
+                _context.next = 24;
                 break;
 
-              case 14:
-                _context.prev = 14;
+              case 19:
+                _context.prev = 19;
                 _context.t0 = _context["catch"](1);
                 tempError = "";
 
@@ -326,17 +439,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 this.error = tempError + " (" + _context.t0.message + ")";
 
-              case 19:
-                _context.prev = 19;
+              case 24:
+                _context.prev = 24;
                 this.loading = false;
-                return _context.finish(19);
+                return _context.finish(24);
 
-              case 22:
+              case 27:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 14, 19, 22]]);
+        }, _callee, this, [[1, 19, 24, 27]]);
       }));
 
       function fetchData() {
@@ -352,23 +465,36 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.prev = 0;
-                _context2.next = 3;
-                return this.addToCartAction(product);
+                if (this.administrator) {
+                  _context2.next = 3;
+                  break;
+                }
+
+                this.$notify({
+                  group: 'messages',
+                  type: 'error',
+                  title: 'No posee autorización para realizar tal operación'
+                });
+                return _context2.abrupt("return");
 
               case 3:
+                _context2.prev = 3;
+                _context2.next = 6;
+                return this.addToCartAction(product);
+
+              case 6:
                 console.log("Producto añadido");
                 this.$notify({
                   group: 'messages',
                   type: 'success',
                   title: 'Producto añadido exitosamente'
                 });
-                _context2.next = 13;
+                _context2.next = 16;
                 break;
 
-              case 7:
-                _context2.prev = 7;
-                _context2.t0 = _context2["catch"](0);
+              case 10:
+                _context2.prev = 10;
+                _context2.t0 = _context2["catch"](3);
                 console.log(_context2.t0);
                 tempError = "";
 
@@ -387,12 +513,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   text: tempError + ' (' + _context2.t0.message + ')'
                 });
 
-              case 13:
+              case 16:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[0, 7]]);
+        }, _callee2, this, [[3, 10]]);
       }));
 
       function addToCart(_x) {
@@ -400,6 +526,63 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       return addToCart;
+    }(),
+    removeProduct: function () {
+      var _removeProduct = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(product) {
+        var tempError;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                this.loading = true;
+                _context3.prev = 1;
+                _context3.next = 4;
+                return axios["delete"]('/api/products/' + product.id);
+
+              case 4:
+                console.log("Producto eliminado");
+                this.$notify({
+                  group: 'messages',
+                  type: 'success',
+                  title: 'Producto eliminado exitosamente'
+                });
+                this.fetchData();
+                _context3.next = 14;
+                break;
+
+              case 9:
+                _context3.prev = 9;
+                _context3.t0 = _context3["catch"](1);
+                tempError = "";
+
+                if (_context3.t0.response) {
+                  if (_context3.t0.response.status == 404) tempError += "El recurso solicitado no existe";else if (_context3.t0.response.status == 401 || _context3.t0.response.status == 403) tempError += "No posee acceso al recurso solicitado";
+                } else if (_context3.t0.request) {
+                  tempError = "El servidor tardó en responder";
+                } else {
+                  tempError = "No se pudo comunicar con el servidor";
+                }
+
+                this.error = tempError + " (" + _context3.t0.message + ")";
+
+              case 14:
+                _context3.prev = 14;
+                this.loading = false;
+                return _context3.finish(14);
+
+              case 17:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this, [[1, 9, 14, 17]]);
+      }));
+
+      function removeProduct(_x2) {
+        return _removeProduct.apply(this, arguments);
+      }
+
+      return removeProduct;
     }()
   }),
   components: {
@@ -579,12 +762,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    items: {
+    value: {
+      type: Array,
+      required: true
+    },
+    options: {
       type: Array,
       required: true,
-      validator: function validator(items) {
-        return items.every(function (item) {
-          return _.has(item, 'state') && typeof item.state === 'boolean' && _.has(item, 'value');
+      validator: function validator(options) {
+        return options.every(function (item) {
+          return _.has(item, 'value');
         });
       }
     },
@@ -595,20 +782,20 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      state: this.items,
       showMore: false
     };
   },
-  watch: {
-    state: function state(items) {
-      this.$emit('update:items', items);
-    }
-  },
   computed: {
+    state: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(value) {
+        this.$emit("input", value);
+      }
+    },
     allChecked: function allChecked() {
-      return !this.state.some(function (item) {
-        return item.state;
-      });
+      return this.value.length == 0;
     }
   }
 });
@@ -642,21 +829,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     start: {
       type: Number,
-      "default": function _default() {
-        return this.min;
-      }
+      "default": null
     },
     end: {
       type: Number,
-      "default": function _default() {
-        return this.max;
-      }
+      "default": null
     },
-    snaps: {
-      type: Array,
-      "default": function _default() {
-        return [];
-      }
+    disabled: {
+      type: Boolean,
+      "default": false
     },
     step: {
       type: Number,
@@ -672,18 +853,43 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   watch: {
-    start: function start(value) {
-      this.$refs.slider.noUiSlider.set([value, null]);
+    start: function start(newValue) {
+      this.$refs.slider.noUiSlider.set([newValue ? newValue : this.min, null]);
     },
-    end: function end(value) {
-      this.$refs.slider.noUiSlider.set([null, value]);
+    end: function end(newValue) {
+      this.$refs.slider.noUiSlider.set([null, newValue ? newValue : this.max]);
+    },
+    min: function min(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.$refs.slider.noUiSlider.updateOptions({
+          range: {
+            'min': newValue,
+            'max': this.max
+          }
+        });
+        this.$emit('update:start', newValue);
+        this.$emit('update:end', this.max);
+      }
+    },
+    max: function max(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.$refs.slider.noUiSlider.updateOptions({
+          range: {
+            'min': this.min,
+            'max': newValue
+          }
+        });
+        this.$emit('update:start', this.min);
+        this.$emit('update:end', newValue);
+      }
+    },
+    disabled: function disabled(newValue) {
+      if (newValue) this.$refs.slider.setAttribute('disabled', true);else this.$refs.slider.removeAttribute('disabled');
     }
   },
   mounted: function mounted() {
-    var _this = this;
-
     var options = {
-      start: [this.start, this.end],
+      start: [this.start ? this.start : this.min, this.end ? this.end : this.max],
       connect: true,
       tooltips: true,
       format: wNumb({
@@ -691,25 +897,16 @@ __webpack_require__.r(__webpack_exports__);
         thousand: '.',
         prefix: this.prefix,
         suffix: this.suffix
-      })
+      }),
+      range: {
+        'min': this.min,
+        'max': this.max
+      },
+      step: this.step
     };
-    var range = {
-      'min': this.min,
-      'max': this.max
-    };
-
-    if (this.snaps.length > 0) {
-      this.snaps.forEach(function (element) {
-        range[element / _this.max * 100 + '%'] = element;
-      });
-      options['snap'] = true;
-    } else {
-      options['step'] = this.step;
-    }
-
-    options['range'] = range;
     noUiSlider.create(this.$refs.slider, options);
     this.$refs.slider.noUiSlider.on('change', this.sliderChange);
+    if (this.disabled) this.$refs.slider.setAttribute('disabled', true);
   },
   methods: {
     sliderChange: function sliderChange(value, handle, unencoded) {
@@ -772,6 +969,13 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -810,6 +1014,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     product: Object,
@@ -822,11 +1029,11 @@ __webpack_require__.r(__webpack_exports__);
       required: true
     }
   },
-  computed: {
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('auth', ['administrator'])), {}, {
     rating: function rating() {
       return this.product.rating ? _.round(parseFloat(this.product.rating)) : 0;
     }
-  }
+  })
 });
 
 /***/ }),
@@ -1003,7 +1210,9 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("TitleBanner", [_vm._v("Ver categoría")]),
+      _c("TitleBanner", [
+        _vm._v(_vm._s(_vm.title ? _vm.title : "Ver categoría"))
+      ]),
       _vm._v(" "),
       _c(
         "div",
@@ -1051,86 +1260,61 @@ var render = function() {
                 [
                   _c(
                     "div",
-                    {
-                      staticClass: "border border-gray-400 rounded-md p-5 mb-3"
-                    },
                     [
-                      _c(
-                        "router-link",
-                        {
-                          staticClass:
-                            "block font-semibold text-orange-500 text-center",
-                          attrs: { to: { name: "build" } }
-                        },
-                        [_vm._v("Build actual")]
-                      ),
-                      _vm._v(" "),
-                      _c("hr", { staticClass: "border-gray-400 my-3" }),
+                      _c("CategoryItem", { attrs: { title: "Filtros" } }),
                       _vm._v(" "),
                       _c(
-                        "div",
-                        { staticClass: "flex flex-wrap leading-tight" },
+                        "CollapsibleItem",
+                        { staticClass: "mb-2", attrs: { title: "Precio" } },
                         [
-                          _c("div", { staticClass: "mr-3 mb-2" }, [
-                            _c("span", { staticClass: "text-xs font-medium" }, [
-                              _vm._v("Partes")
-                            ]),
-                            _c("br"),
-                            _c(
-                              "span",
-                              { staticClass: "font-semibold text-orange-500" },
-                              [_vm._v("123")]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "mr-3 mb-2" }, [
-                            _c("span", { staticClass: "text-xs font-medium" }, [
-                              _vm._v("Total")
-                            ]),
-                            _c("br"),
-                            _c(
-                              "span",
-                              { staticClass: "font-semibold text-orange-500" },
-                              [_vm._v("123")]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "mr-3 mb-2" }, [
-                            _c("span", { staticClass: "text-xs font-medium" }, [
-                              _vm._v("Wattage aproximado")
-                            ]),
-                            _c("br"),
-                            _c(
-                              "span",
-                              { staticClass: "font-semibold text-orange-500" },
-                              [_vm._v("123")]
-                            )
-                          ])
-                        ]
+                          _c("SliderRangeItem", {
+                            attrs: {
+                              prefix: "$",
+                              disabled: _vm.loading,
+                              max: _vm.maxPrice,
+                              start: _vm.priceStartC,
+                              end: _vm.priceEndC
+                            },
+                            on: {
+                              "update:start": function($event) {
+                                _vm.priceStartC = $event
+                              },
+                              "update:end": function($event) {
+                                _vm.priceEndC = $event
+                              }
+                            }
+                          })
+                        ],
+                        1
                       ),
                       _vm._v(" "),
-                      _c("div", { staticClass: "text-sm text-gray-600" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass:
-                              "checkbox justify-center lg:justify-start"
-                          },
-                          [
-                            _c("input", { attrs: { type: "checkbox" } }),
-                            _vm._v(" "),
-                            _c("span", { staticClass: "checkmark" }),
-                            _vm._v(
-                              "\n                            Filtrado de compatibilidad\n                        "
-                            )
-                          ]
-                        )
-                      ])
+                      _c(
+                        "CollapsibleItem",
+                        { staticClass: "mb-2", attrs: { title: "Rating" } },
+                        [
+                          _c("SliderRangeItem", {
+                            attrs: {
+                              suffix: "★",
+                              disabled: _vm.loading,
+                              max: 5,
+                              start: _vm.ratingStartC,
+                              end: _vm.ratingEndC
+                            },
+                            on: {
+                              "update:start": function($event) {
+                                _vm.ratingStartC = $event
+                              },
+                              "update:end": function($event) {
+                                _vm.ratingEndC = $event
+                              }
+                            }
+                          })
+                        ],
+                        1
+                      )
                     ],
                     1
-                  ),
-                  _vm._v(" "),
-                  _c("div")
+                  )
                 ]
               )
             ],
@@ -1141,6 +1325,32 @@ var render = function() {
             "div",
             { staticClass: "lg:col-span-4 px-4 sm:px-0" },
             [
+              _vm.administrator
+                ? _c(
+                    "div",
+                    {
+                      staticClass:
+                        "flex flex-row justify-start items-center mb-2"
+                    },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass:
+                            "inline-block btn-outlined btn-outlined-orange px-2 py-1 text-sm",
+                          attrs: { to: { name: "add-product" } }
+                        },
+                        [
+                          _c("font-awesome-icon", { attrs: { icon: "plus" } }),
+                          _vm._v(" Añadir producto")
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                : _vm._e(),
+              _vm._v(" "),
               _vm.filtered
                 ? _c(
                     "div",
@@ -1166,14 +1376,14 @@ var render = function() {
                             [
                               _vm._v(
                                 "\n                    " +
-                                  _vm._s(_vm.searchC) +
+                                  _vm._s(_vm.searchQuery) +
                                   "\n                "
                               )
                             ]
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      _vm.sortC
+                      _vm.sortQuery
                         ? _c(
                             "FilterItem",
                             {
@@ -1187,21 +1397,21 @@ var render = function() {
                             [
                               _vm._v(
                                 "\n                    " +
-                                  _vm._s(_vm.sortC) +
+                                  _vm._s(_vm.sortQuery) +
                                   "\n                "
                               )
                             ]
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      _vm.sortC && _vm.sortDescC
+                      _vm.sortQuery && _vm.sortDescQuery
                         ? _c(
                             "FilterItem",
                             {
                               attrs: { category: "Ordenar en descenso" },
                               on: {
                                 close: function($event) {
-                                  _vm.sortDescC = false
+                                  _vm.sortDescQuery = false
                                 }
                               }
                             },
@@ -1209,6 +1419,90 @@ var render = function() {
                               _vm.sortDescC
                                 ? _c("span", [_vm._v("Sí")])
                                 : _c("span", [_vm._v("No")])
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.priceStartQuery
+                        ? _c(
+                            "FilterItem",
+                            {
+                              attrs: { category: "Precio mínimo" },
+                              on: {
+                                close: function($event) {
+                                  _vm.priceStartC = null
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                    " +
+                                  _vm._s(_vm.priceStartQuery) +
+                                  "\n                "
+                              )
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.priceEndQuery
+                        ? _c(
+                            "FilterItem",
+                            {
+                              attrs: { category: "Precio máximo" },
+                              on: {
+                                close: function($event) {
+                                  _vm.priceEndC = null
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                    " +
+                                  _vm._s(_vm.priceEndC) +
+                                  "\n                "
+                              )
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.ratingStartQuery
+                        ? _c(
+                            "FilterItem",
+                            {
+                              attrs: { category: "Reseña mínima" },
+                              on: {
+                                close: function($event) {
+                                  _vm.ratingStartC = null
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                    " +
+                                  _vm._s(_vm.ratingStartQuery) +
+                                  " Estrellas\n                "
+                              )
+                            ]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.ratingEndQuery
+                        ? _c(
+                            "FilterItem",
+                            {
+                              attrs: { category: "Reseña máxima" },
+                              on: {
+                                close: function($event) {
+                                  _vm.ratingEndC = null
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                    " +
+                                  _vm._s(_vm.ratingEndC) +
+                                  " Estrellas\n                "
+                              )
                             ]
                           )
                         : _vm._e()
@@ -1342,10 +1636,10 @@ var render = function() {
                                           key: index,
                                           attrs: {
                                             desc:
-                                              _vm.sort == column.name
-                                                ? _vm.sortDesc
+                                              _vm.sortC == column.name
+                                                ? _vm.sortDescC
                                                 : true,
-                                            selected: _vm.sort == column.name
+                                            selected: _vm.sortC == column.name
                                           },
                                           on: {
                                             selected: function($event) {
@@ -1392,6 +1686,9 @@ var render = function() {
                                     on: {
                                       add: function($event) {
                                         return _vm.addToCart(item)
+                                      },
+                                      remove: function($event) {
+                                        return _vm.removeProduct(item)
                                       }
                                     }
                                   })
@@ -1701,7 +1998,7 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _vm._l(_vm.state, function(item, index) {
+      _vm._l(_vm.options, function(item, index) {
         return _c(
           "div",
           {
@@ -1722,36 +2019,35 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: item.state,
-                    expression: "item.state"
+                    value: _vm.state,
+                    expression: "state"
                   }
                 ],
                 attrs: { type: "checkbox" },
                 domProps: {
-                  checked: Array.isArray(item.state)
-                    ? _vm._i(item.state, null) > -1
-                    : item.state
+                  value: item.value,
+                  checked: Array.isArray(_vm.state)
+                    ? _vm._i(_vm.state, item.value) > -1
+                    : _vm.state
                 },
                 on: {
                   change: function($event) {
-                    var $$a = item.state,
+                    var $$a = _vm.state,
                       $$el = $event.target,
                       $$c = $$el.checked ? true : false
                     if (Array.isArray($$a)) {
-                      var $$v = null,
+                      var $$v = item.value,
                         $$i = _vm._i($$a, $$v)
                       if ($$el.checked) {
-                        $$i < 0 && _vm.$set(item, "state", $$a.concat([$$v]))
+                        $$i < 0 && (_vm.state = $$a.concat([$$v]))
                       } else {
                         $$i > -1 &&
-                          _vm.$set(
-                            item,
-                            "state",
-                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                          )
+                          (_vm.state = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)))
                       }
                     } else {
-                      _vm.$set(item, "state", $$c)
+                      _vm.state = $$c
                     }
                   }
                 }
@@ -1768,7 +2064,7 @@ var render = function() {
         )
       }),
       _vm._v(" "),
-      _vm.state.length > _vm.limit
+      _vm.options.length > _vm.limit
         ? _c(
             "button",
             {
@@ -1921,7 +2217,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("tr", { staticClass: "even:bg-gray-200" }, [
+  return _c("tr", { staticClass: "even:bg-gray-200 whitespace-no-wrap" }, [
     _c("td", { staticClass: "p-3 flex justify-center items-center" }, [
       _c(
         "div",
@@ -1930,11 +2226,11 @@ var render = function() {
             "w-12 sm:w-16 md:w-20 hover:relative hover:z-10 flex-shrink-0 rounded-sm border bg-white transition-transform duration-150 ease-in-out transform hover:scale-125 cursor-pointer p-1"
         },
         [
-          _vm.product.image
+          _vm.product.thumbnail
             ? [
                 _c("img", {
                   staticClass: "block w-full h-auto",
-                  attrs: { src: "/storage/components/" + _vm.product.image }
+                  attrs: { src: "/storage/products/" + _vm.product.thumbnail }
                 })
               ]
             : [_c("span", [_vm._v("-")])]
@@ -1950,8 +2246,7 @@ var render = function() {
         _c(
           "router-link",
           {
-            staticClass:
-              "font-semibold whitespace-no-wrap hover:text-orange-600",
+            staticClass: "font-semibold hover:text-orange-600",
             attrs: { to: _vm.to }
           },
           [_vm._v(_vm._s(_vm.product.name))]
@@ -1963,12 +2258,6 @@ var render = function() {
     _c("td", { staticClass: "p-2" }, [
       _c("span", { staticClass: "font-medium" }, [
         _vm._v(_vm._s(_vm.product.price))
-      ])
-    ]),
-    _vm._v(" "),
-    _c("td", { staticClass: "p-2" }, [
-      _c("span", { staticClass: "font-medium" }, [
-        _vm._v(_vm._s(_vm.product.manufacturer.name))
       ])
     ]),
     _vm._v(" "),
@@ -1984,31 +2273,80 @@ var render = function() {
           return _c("span", { key: n + _vm.rating }, [
             _vm._v("\n            ☆\n        ")
           ])
-        })
+        }),
+        _vm._v(" "),
+        _c("span", { staticClass: "text-sm" }, [
+          _vm._v(
+            "(" + _vm._s(_vm.product.rating ? _vm.product.rating : "0") + " ★)"
+          )
+        ])
       ],
       2
     ),
     _vm._v(" "),
-    _c("td", { staticClass: "p-2 text-center" }, [
-      _c(
-        "button",
-        {
-          staticClass:
-            "btn-outlined btn-outlined-orange px-2 py-1 disabled:cursor-not-allowed",
-          attrs: { disabled: _vm.disabled },
-          on: {
-            click: function($event) {
-              _vm.disabled ? "" : _vm.$emit("add")
+    _c(
+      "td",
+      { staticClass: "p-2 text-center" },
+      [
+        _c(
+          "button",
+          {
+            staticClass:
+              "btn-outlined btn-outlined-orange px-2 py-1 disabled:cursor-not-allowed",
+            attrs: { disabled: _vm.disabled },
+            on: {
+              click: function($event) {
+                _vm.disabled ? "" : _vm.$emit("add")
+              }
             }
-          }
-        },
-        [
-          _c("font-awesome-icon", { attrs: { icon: "plus" } }),
-          _vm._v(" Añadir")
-        ],
-        1
-      )
-    ])
+          },
+          [
+            _c("font-awesome-icon", { attrs: { icon: "plus" } }),
+            !_vm.administrator ? [_vm._v(" Añadir")] : _vm._e()
+          ],
+          2
+        ),
+        _vm._v(" "),
+        _vm.administrator
+          ? _c(
+              "button",
+              {
+                staticClass:
+                  "btn-outlined btn-outlined-orange px-2 py-1 disabled:cursor-not-allowed",
+                attrs: { disabled: _vm.disabled },
+                on: {
+                  click: function($event) {
+                    _vm.disabled ? "" : _vm.$emit("remove")
+                  }
+                }
+              },
+              [_c("font-awesome-icon", { attrs: { icon: "times" } })],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.administrator
+          ? _c(
+              "router-link",
+              {
+                staticClass:
+                  "inline-block btn-outlined btn-outlined-orange px-2 py-1",
+                attrs: {
+                  to: {
+                    name: "edit-product",
+                    params: {
+                      productId: _vm.product.id
+                    }
+                  }
+                }
+              },
+              [_c("font-awesome-icon", { attrs: { icon: "pencil-alt" } })],
+              1
+            )
+          : _vm._e()
+      ],
+      1
+    )
   ])
 }
 var staticRenderFns = []

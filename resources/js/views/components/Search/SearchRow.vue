@@ -1,8 +1,8 @@
 <template>
     <div class="p-2 flex flex-row items-center space-x-4 lg:space-x-6">
         <div class="text-center w-20 md:w-24 hover:relative hover:z-10 flex-shrink-0 rounded-sm border bg-white transition-transform duration-150 ease-in-out transform hover:scale-150 cursor-pointer">
-            <template v-if="product.image">
-                <img class="block w-full h-auto" :src="'/storage/components/'+product.image"/>
+            <template v-if="product.thumbnail">
+                <img class="block w-full h-auto" :src="'/storage/products/'+product.thumbnail"/>
             </template>
             <template v-else>
                 <span>-</span>
@@ -22,7 +22,7 @@ export default {
         product: {
             type: Object,
             validator: function (value) {
-                return (!_.has(value, 'image') || (_.isString(value.image) || _.isNull(value.image))) && _.isString(value.price) && _.isString(value.name)
+                return (!_.has(value, 'thumbnail') || (_.isString(value.thumbnail) || _.isNull(value.thumbnail))) && _.isString(value.price) && _.isString(value.name)
             }
         },
         disabled: {

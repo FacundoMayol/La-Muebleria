@@ -297,7 +297,7 @@ __webpack_require__.r(__webpack_exports__);
     product: {
       type: Object,
       validator: function validator(value) {
-        return (!_.has(value, 'image') || _.isString(value.image) || _.isNull(value.image)) && _.isString(value.price) && _.isString(value.name);
+        return (!_.has(value, 'thumbnail') || _.isString(value.thumbnail) || _.isNull(value.thumbnail)) && _.isString(value.price) && _.isString(value.name);
       }
     },
     disabled: {
@@ -572,11 +572,11 @@ var render = function() {
             "text-center w-20 md:w-24 hover:relative hover:z-10 flex-shrink-0 rounded-sm border bg-white transition-transform duration-150 ease-in-out transform hover:scale-150 cursor-pointer"
         },
         [
-          _vm.product.image
+          _vm.product.thumbnail
             ? [
                 _c("img", {
                   staticClass: "block w-full h-auto",
-                  attrs: { src: "/storage/components/" + _vm.product.image }
+                  attrs: { src: "/storage/products/" + _vm.product.thumbnail }
                 })
               ]
             : [_c("span", [_vm._v("-")])]

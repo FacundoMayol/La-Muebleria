@@ -7,5 +7,6 @@ return [
     'logout_success' => 'User succesfully logged out.',
     'invalid_cart_key' => 'Invalid cart key.',
     'rating_created' => 'Rating succesfully created.',
-    'rating_destroyed' => 'Rating succesfully deleted.'
+    'rating_destroyed' => 'Rating succesfully deleted.',
+    'message_create_success' => 'Message succesfully received'
 ];

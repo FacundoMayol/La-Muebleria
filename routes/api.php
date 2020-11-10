@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RatingController;
-use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,8 +30,19 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
+Route::apiResource('/messages', MessageController::class)->except([
+    'update'
+]);
+
+Route::get('/categories', [CategoryController::class, 'index']);
+
 Route::get('/products', [ProductController::class, 'index']);
+Route::get('/category/{category:name}', [ProductController::class, 'indexFiltered']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
+Route::group(['middleware' => 'auth:sanctum'], function() {
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+});
 
 Route::get('/ratings/{product}', [RatingController::class, 'index']);
 Route::group(['middleware' => 'auth:sanctum'], function() {

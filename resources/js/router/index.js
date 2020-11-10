@@ -7,14 +7,18 @@ Vue.use(VueRouter)
 
 const Main = () => import('../views/MainPage')
 const NotFound = () => import('../views/NotFound')
-const Build = () => import('../views/Build')
 const Categories = () => import('../views/Categories')
 const ProductList = () => import('../views/ProductList')
 const ViewProduct = () => import('../views/ViewProduct')
+const UpdateProduct = () => import('../views/UpdateProduct')
+const CreateProduct = () => import('../views/CreateProduct')
 const Search = () => import('../views/Search')
 const LogIn = () => import('../views/LogIn')
 const SignUp = () => import('../views/SignUp')
 const Cart = () => import('../views/Cart')
+const Contact = () => import('../views/Contact')
+const MessageList = () => import('../views/MessageList')
+const ViewMessage = () => import('../views/ViewMessage')
 
 const router = new VueRouter({
     mode: 'history',
@@ -64,19 +68,20 @@ const router = new VueRouter({
             },
         },
         { 
-            path: '/build', 
-            name: 'build', 
-            component: Build,
-            meta: {
-                title: 'Armar PC'
-            }
-        },
-        { 
             path: '/products', 
             name: 'categories', 
             component: Categories,
             meta: {
                 title: 'Productos'
+            }
+        },
+        { 
+            path: '/product/create', 
+            name: 'add-product', 
+            component: CreateProduct,
+            meta: {
+                title: 'Añadir producto',
+                requiresAdmin: true
             }
         },
         { 
@@ -89,12 +94,59 @@ const router = new VueRouter({
             }
         },
         { 
+            path: '/product/:productId/edit', 
+            name: 'edit-product', 
+            component: UpdateProduct,
+            props: true,
+            meta: {
+                title: 'Editar producto',
+                requiresAdmin: true
+            }
+        },
+        { 
             path: '/products/:category', 
             name: 'list', 
             component: ProductList,
-            props: route => ({ categoryParam: route.params.category, searchQuery: route.query.s, pageQuery: !isNaN(parseInt(route.query.p, 10))?parseInt(route.query.p, 10):0, sortQuery: route.query.sort, sortDescQuery: route.query.sortd == 'true' }),
+            props: route => ({ 
+                categoryParam: route.params.category, 
+                searchQuery: route.query.s, 
+                pageQuery: !isNaN(parseInt(route.query.p, 10))?parseInt(route.query.p, 10):0, 
+                sortQuery: route.query.sort, 
+                sortDescQuery: route.query.sortd == 'true', 
+                ratingStartQuery: !isNaN(parseInt(route.query.rating_start, 10))?parseInt(route.query.rating_start, 10):null, 
+                ratingEndQuery: !isNaN(parseInt(route.query.rating_end, 10))?parseInt(route.query.rating_end, 10):null,
+                priceStartQuery: !isNaN(parseFloat(route.query.price_start))?parseFloat(route.query.price_start):null, 
+                priceEndQuery: !isNaN(parseFloat(route.query.price_end))?parseFloat(route.query.price_end):null
+            }),
             meta: {
                 title: 'Ver categoría'
+            }
+        },
+        {
+            path: '/contact',
+            name: 'contact',
+            component: Contact,
+            meta: {
+                title: 'Contacto'
+            }
+        },
+        {
+            path: '/contact/admin',
+            name: 'admin-contact',
+            component: MessageList,
+            meta: {
+                title: 'Ver mensajes',
+                requiresAdmin: true
+            }
+        },
+        {
+            path: '/message/:messageId',
+            name: 'message',
+            component: ViewMessage,
+            props: true,
+            meta: {
+                title: 'Ver mensaje',
+                requiresAdmin: true
             }
         },
         { 
@@ -109,7 +161,17 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     store.dispatch('auth/me').then(function () {
-        if(to.matched.some(record => record.meta.requiresAuth) && !store.getters['auth/authenticated']) {
+        if(to.matched.some(record => record.meta.requiresAdmin) && !store.getters['auth/administrator']) {
+            Vue.notify({
+                group: 'messages',
+                type: 'error',
+                title: 'Error',
+                text: 'No posee autorización para realizar tal acción'
+            });
+            next({
+                name: 'main'
+            })
+        } else if(to.matched.some(record => record.meta.requiresAuth) && !store.getters['auth/authenticated']) {
             next({
                 name: 'login'
             })

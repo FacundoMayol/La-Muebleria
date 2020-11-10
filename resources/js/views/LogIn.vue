@@ -5,7 +5,7 @@
             <div class="px-8 py-6">
                 <form class="space-y-6" @submit.prevent="submitCredentials">
                     <div class="space-y-2">
-                        <input v-model="form.email" type="text" class="w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out" placeholder="Dirección de correo electrónico">
+                        <input v-model="form.email" type="email" class="w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out" placeholder="Dirección de correo electrónico">
                         <p class="text-red-600" v-for="(error, index) in validationErrors.email" :key="index">{{ error }}</p>
                     </div>
                     <div class="space-y-2">

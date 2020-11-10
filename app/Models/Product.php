@@ -11,8 +11,12 @@ class Product extends Model
 
     protected $guarded = [];
 
-    public function manufacturer () {
-        return $this->belongsTo(Manufacturer::class);
+    public function category () {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function images () {
+        return $this->hasMany(Image::class);
     }
 
     public function carts () {

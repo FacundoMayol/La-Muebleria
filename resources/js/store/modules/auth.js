@@ -7,6 +7,9 @@ const state = {
 const getters = {
     authenticated(state) {
         return state.user != null
+    },
+    administrator(state) {
+        return state.user != null && !!+state.user.is_administrator
     }
 }
 

@@ -12221,6 +12221,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -12229,7 +12232,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       search: ''
     };
   },
-  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])('auth', ['authenticated'])), Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])('auth', ['user'])),
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])('auth', ['authenticated', 'administrator'])), Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])('auth', ['user'])),
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])('auth', {
     logOutAction: 'logOut'
   })), {}, {
@@ -34167,12 +34170,25 @@ var render = function() {
                   "router-link",
                   {
                     staticClass: "navbar-link",
-                    attrs: { to: { name: "build" } }
+                    attrs: { to: { name: "contact" } }
                   },
-                  [_vm._v("Construir")]
-                )
+                  [_vm._v("Contacto")]
+                ),
+                _vm._v(" "),
+                _vm.administrator
+                  ? [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "navbar-link",
+                          attrs: { to: { name: "admin-contact" } }
+                        },
+                        [_vm._v("Administrar mensajes")]
+                      )
+                    ]
+                  : _vm._e()
               ],
-              1
+              2
             ),
             _vm._v(" "),
             _c(
@@ -52438,15 +52454,11 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
 var Main = function Main() {
-  return __webpack_require__.e(/*! import() */ 7).then(__webpack_require__.bind(null, /*! ../views/MainPage */ "./resources/js/views/MainPage.vue"));
+  return __webpack_require__.e(/*! import() */ 10).then(__webpack_require__.bind(null, /*! ../views/MainPage */ "./resources/js/views/MainPage.vue"));
 };
 
 var NotFound = function NotFound() {
-  return __webpack_require__.e(/*! import() */ 8).then(__webpack_require__.bind(null, /*! ../views/NotFound */ "./resources/js/views/NotFound.vue"));
-};
-
-var Build = function Build() {
-  return __webpack_require__.e(/*! import() */ 5).then(__webpack_require__.bind(null, /*! ../views/Build */ "./resources/js/views/Build.vue"));
+  return __webpack_require__.e(/*! import() */ 11).then(__webpack_require__.bind(null, /*! ../views/NotFound */ "./resources/js/views/NotFound.vue"));
 };
 
 var Categories = function Categories() {
@@ -52461,20 +52473,40 @@ var ViewProduct = function ViewProduct() {
   return __webpack_require__.e(/*! import() */ 2).then(__webpack_require__.bind(null, /*! ../views/ViewProduct */ "./resources/js/views/ViewProduct.vue"));
 };
 
+var UpdateProduct = function UpdateProduct() {
+  return __webpack_require__.e(/*! import() */ 13).then(__webpack_require__.bind(null, /*! ../views/UpdateProduct */ "./resources/js/views/UpdateProduct.vue"));
+};
+
+var CreateProduct = function CreateProduct() {
+  return __webpack_require__.e(/*! import() */ 8).then(__webpack_require__.bind(null, /*! ../views/CreateProduct */ "./resources/js/views/CreateProduct.vue"));
+};
+
 var Search = function Search() {
   return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.bind(null, /*! ../views/Search */ "./resources/js/views/Search.vue"));
 };
 
 var LogIn = function LogIn() {
-  return __webpack_require__.e(/*! import() */ 6).then(__webpack_require__.bind(null, /*! ../views/LogIn */ "./resources/js/views/LogIn.vue"));
+  return __webpack_require__.e(/*! import() */ 9).then(__webpack_require__.bind(null, /*! ../views/LogIn */ "./resources/js/views/LogIn.vue"));
 };
 
 var SignUp = function SignUp() {
-  return __webpack_require__.e(/*! import() */ 9).then(__webpack_require__.bind(null, /*! ../views/SignUp */ "./resources/js/views/SignUp.vue"));
+  return __webpack_require__.e(/*! import() */ 12).then(__webpack_require__.bind(null, /*! ../views/SignUp */ "./resources/js/views/SignUp.vue"));
 };
 
 var Cart = function Cart() {
   return __webpack_require__.e(/*! import() */ 3).then(__webpack_require__.bind(null, /*! ../views/Cart */ "./resources/js/views/Cart.vue"));
+};
+
+var Contact = function Contact() {
+  return __webpack_require__.e(/*! import() */ 7).then(__webpack_require__.bind(null, /*! ../views/Contact */ "./resources/js/views/Contact.vue"));
+};
+
+var MessageList = function MessageList() {
+  return __webpack_require__.e(/*! import() */ 5).then(__webpack_require__.bind(null, /*! ../views/MessageList */ "./resources/js/views/MessageList.vue"));
+};
+
+var ViewMessage = function ViewMessage() {
+  return __webpack_require__.e(/*! import() */ 6).then(__webpack_require__.bind(null, /*! ../views/ViewMessage */ "./resources/js/views/ViewMessage.vue"));
 };
 
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
@@ -52524,18 +52556,19 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       title: 'Carrito de compras'
     }
   }, {
-    path: '/build',
-    name: 'build',
-    component: Build,
-    meta: {
-      title: 'Armar PC'
-    }
-  }, {
     path: '/products',
     name: 'categories',
     component: Categories,
     meta: {
       title: 'Productos'
+    }
+  }, {
+    path: '/product/create',
+    name: 'add-product',
+    component: CreateProduct,
+    meta: {
+      title: 'Añadir producto',
+      requiresAdmin: true
     }
   }, {
     path: '/product/:productId',
@@ -52544,6 +52577,15 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     props: true,
     meta: {
       title: 'Ver producto'
+    }
+  }, {
+    path: '/product/:productId/edit',
+    name: 'edit-product',
+    component: UpdateProduct,
+    props: true,
+    meta: {
+      title: 'Editar producto',
+      requiresAdmin: true
     }
   }, {
     path: '/products/:category',
@@ -52555,11 +52597,39 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
         searchQuery: route.query.s,
         pageQuery: !isNaN(parseInt(route.query.p, 10)) ? parseInt(route.query.p, 10) : 0,
         sortQuery: route.query.sort,
-        sortDescQuery: route.query.sortd == 'true'
+        sortDescQuery: route.query.sortd == 'true',
+        ratingStartQuery: !isNaN(parseInt(route.query.rating_start, 10)) ? parseInt(route.query.rating_start, 10) : null,
+        ratingEndQuery: !isNaN(parseInt(route.query.rating_end, 10)) ? parseInt(route.query.rating_end, 10) : null,
+        priceStartQuery: !isNaN(parseFloat(route.query.price_start)) ? parseFloat(route.query.price_start) : null,
+        priceEndQuery: !isNaN(parseFloat(route.query.price_end)) ? parseFloat(route.query.price_end) : null
       };
     },
     meta: {
       title: 'Ver categoría'
+    }
+  }, {
+    path: '/contact',
+    name: 'contact',
+    component: Contact,
+    meta: {
+      title: 'Contacto'
+    }
+  }, {
+    path: '/contact/admin',
+    name: 'admin-contact',
+    component: MessageList,
+    meta: {
+      title: 'Ver mensajes',
+      requiresAdmin: true
+    }
+  }, {
+    path: '/message/:messageId',
+    name: 'message',
+    component: ViewMessage,
+    props: true,
+    meta: {
+      title: 'Ver mensaje',
+      requiresAdmin: true
     }
   }, {
     path: '*',
@@ -52572,6 +52642,18 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
 router.beforeEach(function (to, from, next) {
   _store_index_js__WEBPACK_IMPORTED_MODULE_2__["default"].dispatch('auth/me').then(function () {
     if (to.matched.some(function (record) {
+      return record.meta.requiresAdmin;
+    }) && !_store_index_js__WEBPACK_IMPORTED_MODULE_2__["default"].getters['auth/administrator']) {
+      vue__WEBPACK_IMPORTED_MODULE_0___default.a.notify({
+        group: 'messages',
+        type: 'error',
+        title: 'Error',
+        text: 'No posee autorización para realizar tal acción'
+      });
+      next({
+        name: 'main'
+      });
+    } else if (to.matched.some(function (record) {
       return record.meta.requiresAuth;
     }) && !_store_index_js__WEBPACK_IMPORTED_MODULE_2__["default"].getters['auth/authenticated']) {
       next({
@@ -52652,6 +52734,9 @@ var state = {
 var getters = {
   authenticated: function authenticated(state) {
     return state.user != null;
+  },
+  administrator: function administrator(state) {
+    return state.user != null && !!+state.user.is_administrator;
   }
 };
 var mutations = {
@@ -53120,8 +53205,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\super\Desktop\KukuraGaming\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\super\Desktop\KukuraGaming\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\super\Desktop\KakeraGaming\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\super\Desktop\KakeraGaming\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

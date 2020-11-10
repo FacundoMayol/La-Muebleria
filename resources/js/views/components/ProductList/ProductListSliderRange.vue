@@ -17,21 +17,15 @@ export default {
         },
         start: {
             type: Number,
-            default: function () {
-                return this.min 
-            }
+            default: null
         },
         end: {
             type: Number,
-            default: function () {
-                return this.max 
-            }
+            default: null
         },
-        snaps: {
-            type: Array,
-            default: function () {
-                return []
-            }
+        disabled: {
+            type: Boolean,
+            default: false
         },
         step: {
             type: Number,
@@ -47,16 +41,46 @@ export default {
         }
     },
     watch: {
-        start: function (value) {
-            this.$refs.slider.noUiSlider.set([value, null])
+        start: function (newValue) {
+            this.$refs.slider.noUiSlider.set([newValue?newValue:this.min, null])
         },
-        end: function (value) {
-            this.$refs.slider.noUiSlider.set([null, value])
+        end: function (newValue) {
+            this.$refs.slider.noUiSlider.set([null, newValue?newValue:this.max])
+        },
+        min: function (newValue, oldValue) {
+            if(newValue != oldValue){
+                this.$refs.slider.noUiSlider.updateOptions({
+                    range: {
+                        'min': newValue,
+                        'max': this.max
+                    },
+                })
+                this.$emit('update:start', newValue)
+                this.$emit('update:end', this.max)
+            }
+        },
+        max: function (newValue, oldValue) {
+            if(newValue != oldValue){
+                this.$refs.slider.noUiSlider.updateOptions({
+                    range: {
+                        'min': this.min,
+                        'max': newValue
+                    },
+                })
+                this.$emit('update:start', this.min)
+                this.$emit('update:end', newValue)
+            }
+        },
+        disabled: function (newValue) {
+            if(newValue)
+                this.$refs.slider.setAttribute('disabled', true)
+            else
+                this.$refs.slider.removeAttribute('disabled')
         }
     },
     mounted: function () {
         var options = {
-            start: [this.start, this.end],
+            start: [this.start?this.start:this.min, this.end?this.end:this.max],
             connect: true,
             tooltips: true,
             format: wNumb({
@@ -64,23 +88,16 @@ export default {
                 thousand: '.',
                 prefix: this.prefix,
                 suffix: this.suffix
-            })
+            }),
+            range: {
+                'min': this.min,
+                'max': this.max
+            },
+            step: this.step
         }
-        var range = {
-            'min': this.min,
-            'max': this.max
-        }
-        if(this.snaps.length>0){
-            this.snaps.forEach(element => {
-                range[element/this.max*100+'%'] = element
-            });
-            options['snap'] = true
-        }else {
-            options['step'] = this.step
-        }
-        options['range'] = range
         noUiSlider.create(this.$refs.slider, options);
         this.$refs.slider.noUiSlider.on('change', this.sliderChange)
+        if(this.disabled) this.$refs.slider.setAttribute('disabled', true)
     },
     methods: {
         sliderChange: function (value, handle, unencoded) {
