@@ -576,7 +576,7 @@ var render = function() {
             ? [
                 _c("img", {
                   staticClass: "block w-full h-auto",
-                  attrs: { src: "/storage/products/" + _vm.product.thumbnail }
+                  attrs: { src: _vm.product.thumbnail }
                 })
               ]
             : [_c("span", [_vm._v("-")])]

@@ -620,7 +620,7 @@ var render = function() {
                             [
                               _c("img", {
                                 attrs: {
-                                  src: "/storage/products/" + image,
+                                  src: image,
                                   alt: "Imágen del producto"
                                 }
                               })
@@ -636,7 +636,7 @@ var render = function() {
                         ? _c("img", {
                             staticClass: "object-contain object-center w-full",
                             attrs: {
-                              src: "/storage/products/" + _vm.currentImg,
+                              src: _vm.currentImg,
                               alt: "Imágen del producto"
                             }
                           })
