@@ -3,7 +3,7 @@
         <td class="p-3 flex justify-center items-center">
             <div class="w-12 sm:w-16 md:w-20 hover:relative hover:z-10 flex-shrink-0 rounded-sm border bg-white transition-transform duration-150 ease-in-out transform hover:scale-125 cursor-pointer p-1">
                 <template v-if="product.thumbnail">
-                    <img class="block w-full h-auto" :src="'/storage/products/'+product.thumbnail"/>
+                    <img class="block w-full h-auto" :src="product.thumbnail"/>
                 </template>
                 <template v-else>
                     <span>-</span>

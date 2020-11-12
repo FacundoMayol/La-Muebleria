@@ -20,11 +20,11 @@
                             v-for="(image, index) in [product.thumbnail].concat(product.images)" :key="index"
                             @mouseenter="currentImg = image"
                             class="rounded-md p-1 border bg-gray-200 border-gray-300 hover:cursor-pointer flex justify-center items-center w-full h-auto">
-                                <img :src="'/storage/products/'+image" alt="Imágen del producto">
+                                <img :src="image" alt="Imágen del producto">
                             </div>
                         </div>
                         <div class="w-9/12 lg:w-10/12">
-                            <img v-if="currentImg" class="object-contain object-center w-full" :src="'/storage/products/'+currentImg" alt="Imágen del producto"/>
+                            <img v-if="currentImg" class="object-contain object-center w-full" :src="currentImg" alt="Imágen del producto"/>
                         </div>
                     </div>
                     <div class="space-y-2">

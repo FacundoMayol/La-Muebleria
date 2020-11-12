@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Http\Resources\Image as ImageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends JsonResource
 {
@@ -23,7 +24,7 @@ class Product extends JsonResource
             'category' => $this->category,
             'price' => $this->price,
             'description' => $this->description,
-            'thumbnail' => $this->thumbnail,
+            'thumbnail' => Storage::url($this->thumbnail),
             'images' => ImageResource::collection($this->images),
             'rating' => $this->ratings()->avg('rating'),
             'n_users_rating' => $this->ratings()->count(),
