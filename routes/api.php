@@ -21,10 +21,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-if (App::environment('production')) {
-    URL::forceScheme('https');
-}
-
 Route::group(['prefix' => 'auth'], function () {
     Route::group(['middleware' => 'guest'], function() {
         Route::post('/login', [AuthController::class, 'login']);
