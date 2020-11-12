@@ -1,2 +1,2 @@
-# KukuraGaming
- Una página de venta de componentes de PC.
+# la Mueblería
+ Una página de venta de muebles.
