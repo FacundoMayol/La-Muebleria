@@ -11,6 +11,8 @@ class Category extends Model
 
     public $timestamps = false;
 
+    protected $guarded = [];
+
     public function parent() {
         return $this->belongsTo(Category::class, 'parent_id');
     }
