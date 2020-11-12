@@ -64,14 +64,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   created: function created() {
-    this.fetchData();
+    var vm = this;
+    this.fetchData().then(function () {
+      if (vm.message.title) document.title = vm.message.title + ' | La mueblería';
+    });
   },
   watch: {
     $route: function $route() {
       this.loading = false;
       this.message = null;
       this.error = null;
-      this.fetchData();
+      var vm = this;
+      this.fetchData().then(function () {
+        if (vm.message.title) document.title = vm.message.title + ' | La mueblería';
+      });
     }
   },
   methods: {
@@ -90,12 +96,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 4:
                 data = _context.sent.data;
                 this.message = data;
-                document.title = data.title + ' | KakeraGaming';
-                _context.next = 15;
+                _context.next = 13;
                 break;
 
-              case 9:
-                _context.prev = 9;
+              case 8:
+                _context.prev = 8;
                 _context.t0 = _context["catch"](1);
                 tempError = "";
 
@@ -108,19 +113,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }
 
                 this.error = tempError + " (" + _context.t0.message + ")";
-                document.title = 'Error al cargar producto | KakeraGaming';
 
-              case 15:
-                _context.prev = 15;
+              case 13:
+                _context.prev = 13;
                 this.loading = false;
-                return _context.finish(15);
+                return _context.finish(13);
 
-              case 18:
+              case 16:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 9, 15, 18]]);
+        }, _callee, this, [[1, 8, 13, 16]]);
       }));
 
       function fetchData() {

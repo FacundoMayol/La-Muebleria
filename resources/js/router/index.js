@@ -187,7 +187,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to, from) => {
     if (to.meta && to.meta.title) {
-        document.title = to.meta.title + ' | KakeraGaming';
+        document.title = to.meta.title + ' | La mueblería';
     }
 })
 

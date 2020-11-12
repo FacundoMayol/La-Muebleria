@@ -2,7 +2,7 @@
     <header class="sticky top-0 shadow-md z-50">
         <nav role="navigation"  class="bg-orange-600 px-4 py-2 flex items-center justify-between flex-wrap">
             <router-link :to="{ name: 'main' }" class="group flex items-center justify-between mr-4">
-                <img class="w-10 h-10 mr-1 transform group-hover:rotate-45 transition duration-300 ease-in-out" src="/images/icon.png" alt="brand"/><h1 class="text-white text-opacity-75 group-hover:text-opacity-100 transition duration-300 ease-in-out text-xl">KakeraGaming</h1>
+                <Logo class="text-white text-opacity-75 group-hover:text-opacity-100 fill-current stroke-current w-10 h-10 mr-1 transform group-hover:rotate-45 transition duration-300 ease-in-out"/><h1 class="text-white text-opacity-75 group-hover:text-opacity-100 transition duration-300 ease-in-out text-xl">La mueblería</h1>
             </router-link>
             <div class="lg:hidden">
                 <button @click="hideNav = !hideNav" class="flex items-center px-3 py-2 border rounded text-white 
@@ -32,7 +32,7 @@
                 </div>
                 <form class="flex justify-center items-center mt-4 lg:mt-0">
                     <button @click.prevent="goSearch" class="bg-white text-opacity-75 hover:text-opacity-100 text-orange-600 transition duration-300 ease-in-out border border-gray-200  rounded-l-md p-2"><font-awesome-icon icon="search"></font-awesome-icon></button>
-                    <input v-model="search" class="flex-grow lg:flex-grow-0 bg-white placeholder-gray-600 rounded-r-md border border-gray-200 text-gray-700 p-2" placeholder="Buscar componentes"/>
+                    <input v-model="search" class="flex-grow lg:flex-grow-0 bg-white placeholder-gray-600 rounded-r-md border border-gray-200 text-gray-700 p-2" placeholder="Buscar productos"/>
                 </form>
             </div>
         </nav>
@@ -41,6 +41,8 @@
 
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
+
+import Logo from './Logo'
 
 export default {
     data () {
@@ -92,6 +94,9 @@ export default {
                 })
             }
         }
+    },
+    components: {
+        Logo
     }
 }
 </script>

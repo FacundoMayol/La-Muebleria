@@ -316,7 +316,7 @@ export default {
     created () {
         this.updateQueryDebounced = _.debounce(this.updateQuery, 500)
         this.fetchData()
-        document.title = this.title + ' | KakeraGaming';
+        document.title = this.title + ' | La mueblería';
     },
     watch: {
         $route: function () {
@@ -333,7 +333,7 @@ export default {
             this.priceStart = this.priceStartQuery,
             this.priceEnd = this.priceEndQuery,
             this.fetchData()
-            document.title = this.title + ' | KakeraGaming';
+            document.title = this.title + ' | La mueblería';
         }
     },
     methods: {

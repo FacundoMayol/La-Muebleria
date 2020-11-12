@@ -46,14 +46,22 @@ export default {
         }
     },
     created () {
-        this.fetchData()
+        var vm = this
+        this.fetchData().then(function () {
+            if(vm.message.title)
+                document.title = vm.message.title + ' | La mueblería';
+        })
     },
     watch: {
         $route: function () {
             this.loading = false
             this.message = null
             this.error = null
-            this.fetchData()
+            var vm = this
+            this.fetchData().then(function () {
+                if(vm.message.title)
+                    document.title = vm.message.title + ' | La mueblería';
+            })
         }
     },
     methods: {
@@ -62,7 +70,6 @@ export default {
             try {
                 const data = (await axios.get('/api/messages/'+this.messageId)).data
                 this.message = data
-                document.title = data.title + ' | KakeraGaming';
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
@@ -76,7 +83,6 @@ export default {
                     tempError = "No se pudo comunicar con el servidor";
                 }
                 this.error = tempError + " (" + e.message + ")"
-                document.title = 'Error al cargar producto | KakeraGaming';
             } finally {
                 this.loading = false
             }

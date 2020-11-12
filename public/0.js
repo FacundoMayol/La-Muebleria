@@ -353,7 +353,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.updateQueryDebounced = _.debounce(this.updateQuery, 500);
     this.fetchData();
-    document.title = this.title + ' | KakeraGaming';
+    document.title = this.title + ' | La mueblería';
   },
   watch: {
     $route: function $route() {
@@ -364,7 +364,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.totalItems = 0;
       this.error = null;
       this.sort = this.sortQuery, this.sortDesc = this.sortDescQuery, this.ratingStart = this.ratingStartQuery, this.ratingEnd = this.ratingEndQuery, this.priceStart = this.priceStartQuery, this.priceEnd = this.priceEndQuery, this.fetchData();
-      document.title = this.title + ' | KakeraGaming';
+      document.title = this.title + ' | La mueblería';
     }
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])('cart', {

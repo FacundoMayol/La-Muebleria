@@ -179,7 +179,7 @@ export default {
             try {
                 var formData = new FormData()
                 var vm = this
-                Object.keys(vm.form).forEach(function (input) {
+                Object.keys(this.form).forEach(function (input) {
                     if(vm.form[input] && input != 'details')
                         formData.append(input, vm.form[input])
                     else if(input == 'details')

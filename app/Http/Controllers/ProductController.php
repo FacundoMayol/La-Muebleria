@@ -112,6 +112,52 @@ class ProductController extends Controller
         }
     }
 
+    public function update(Product $product, Request $request)
+    {
+        $this->authorize('update', $product);
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'model' => 'required|string|max:100',
+            'category' => 'required|exists:categories,id',
+            'price' => 'required|numeric',
+            'description' => 'string',
+            'thumbnail' => 'file|image|max:2048',
+            'details.*' => 'file|image|max:2048'
+        ]);   
+        $product->name = $request->input('name');
+        $product->model = $request->input('model');
+        $product->category_id = Category::findOrFail($request->input('category'))->id;
+        $product->price = $request->input('price');
+        $product->description = $request->input('description', '');
+        if($request->hasFile('thumbnail')){
+            if($product->thumbnail)
+                Storage::delete('public/products/'.$product->thumbnail);
+            $file = $request->file('thumbnail');
+            $filename = $file->hashName();
+            Storage::putFileAs(
+                'public/products', $file, $filename
+            );
+            $product->thumbnail = $filename;
+        }
+        $product->save();
+        if($request->hasFile('details')){
+            foreach(Image::where('product_id', $product->id)->get() as $image){
+                Storage::delete('public/products/'.$image->image);
+            }
+            Image::where('product_id', $product->id)->delete();
+            foreach($request->file('details') as $file){
+                $filename = $file->hashName();
+                Storage::putFileAs(
+                    'public/products', $file, $filename
+                );
+                Image::create([
+                    'product_id' => $product->id,
+                    'image' => $filename
+                ]);
+            }
+        }
+    }
+
     public function destroy(Product $product, Request $request)
     {
         $this->authorize('delete', $product);

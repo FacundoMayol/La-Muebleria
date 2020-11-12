@@ -149,7 +149,15 @@ return [
     'attributes' => [
         'name' => 'nombre',
         'email' => 'correo electrónico',
-        'password' => 'contraseña'
+        'password' => 'contraseña',
+        'model' => 'modelo',
+        'description' => 'descripción',
+        'price' => 'precio',
+        'thumbnail' => 'imágen principal',
+        'details' => 'detalles',
+        'category' => 'categoría',
+        'title' => 'título',
+        'message' => 'mensaje'
     ],
 
 ];

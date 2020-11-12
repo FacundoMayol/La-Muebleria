@@ -48,6 +48,7 @@
                             </span>
                         </div>
                         <p v-if="product.model" class="text-orange-400">Modelo: {{ product.model }}</p>
+                        <p class="text-orange-400">Categoría: {{ product.category.name }}</p>
                         <p class="text-gray-800">{{ product.description }}</p>
                         <div class="flex flex-row justify-center items-center">
                             <NumberSpinnerItem @add="addToCart" :min="1" class="mr-1" v-model.number="quantity"/>
@@ -102,7 +103,11 @@ export default {
         }
     },
     created () {
-        this.fetchData()
+        var vm = this
+        this.fetchData().then(function () {
+            if(vm.product.name)
+                document.title = vm.product.name + ' | La mueblería';
+        })
     },
     watch: {
         $route: function () {
@@ -110,7 +115,11 @@ export default {
             this.error = null
             this.quantity = 1
             this.currentImg = null
-            this.fetchData()
+            var vm = this
+            this.fetchData().then(function () {
+                if(vm.product.name)
+                    document.title = vm.product.name + ' | La mueblería';
+            })
         }
     },
     methods: {
@@ -123,7 +132,6 @@ export default {
                 const data = (await axios.get('/api/products/'+this.productId)).data.data
                 this.product = data
                 this.currentImg = this.product.thumbnail
-                document.title = data.name + ' | KakeraGaming';
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
@@ -137,7 +145,7 @@ export default {
                     tempError = "No se pudo comunicar con el servidor";
                 }
                 this.error = tempError + " (" + e.message + ")"
-                document.title = 'Error al cargar producto | KakeraGaming';
+                document.title = 'Error al cargar producto | La mueblería';
             } finally {
                 this.loading = false
             }

@@ -231,7 +231,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _context2.prev = 1;
                 formData = new FormData();
                 vm = this;
-                Object.keys(vm.form).forEach(function (input) {
+                Object.keys(this.form).forEach(function (input) {
                   if (vm.form[input] && input != 'details') formData.append(input, vm.form[input]);else if (input == 'details') _.forEach(vm.form[input], function (file, index) {
                     formData.append('details[' + index + ']', file);
                   });

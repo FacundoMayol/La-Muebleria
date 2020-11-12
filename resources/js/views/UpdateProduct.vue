@@ -1,76 +1,94 @@
-<!--template>
-    <div class="flex flex-1 flex-col">
-        <TitleBanner>Ver producto</TitleBanner>
-        <template v-if="error">
-            <div class="flex flex-1 flex-col justify-center items-center">
-                <h1 class="text-orange-500 text-xl sm:text-2xl lg:text-3xl font-semibold text-center">{{ error }}</h1>
-            </div>
-        </template>
-        <template v-else-if="loading">
-            <div class="flex flex-1 flex-col justify-center items-center">
-                <span class="spinner w-12 h-12"></span>
-            </div>
-        </template>
-        <template v-else>
-            <div class="container mx-auto p-5 mt-2 lg:mt-5">
-                <div class="grid lg:grid-cols-2 gap-x-12 gap-y-3">
-                    <div class="flex flex-1">
-                        <div class="w-3/12 lg:w-2/12 px-2 flex flex-col gap-y-2 justify-start items-center">
-                            <div 
-                            v-for="(image, index) in [product.thumbnail].concat(product.images)" :key="index"
-                            @mouseenter="currentImg = image"
-                            class="rounded-md p-1 border bg-gray-200 border-gray-300 hover:cursor-pointer flex justify-center items-center w-full h-auto">
-                                <img :src="'/storage/products/'+image" alt="Imágen del producto">
-                            </div>
-                        </div>
-                        <div class="w-9/12 lg:w-10/12">
-                            <img v-if="currentImg" class="object-contain object-center w-full" :src="'/storage/products/'+currentImg" alt="Imágen del producto"/>
-                        </div>
+<template>
+    <div v-if="loadingError" class="flex flex-1 flex-col justify-center items-center">
+        <h1 class="text-orange-500 text-xl sm:text-2xl lg:text-3xl font-semibold text-center">{{ error }}</h1>
+    </div>
+    <div v-else-if="loading" class="flex flex-1 flex-col justify-center items-center">
+        <span class="spinner w-12 h-12"></span>
+    </div>
+    <div v-else class="flex flex-1 flex-col sm:justify-center items-center sm:bg-orange-400">
+        <div class="bg-white sm:border sm:border-orange-500 sm:rounded-md sm:shadow-lg w-full max-w-full sm:max-w-sm lg:max-w-lg">
+            <h1 class="bg-orange-500 text-white font-semibold text-3xl text-center p-4">Modificar producto</h1>
+            <div class="px-8 py-6">
+                <p class="text-orange-300 text-sm" v-if="product">Producto #{{ product.id }}</p>
+                <form class="space-y-6" @submit.prevent="submitForm">
+                    <div class="space-y-2">
+                        <input v-model.trim="form.name" type="text" maxlength="100" class="w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out" placeholder="Nombre"/>
+                        <p class="text-red-600" v-for="(error, index) in validationErrors.name" :key="index">{{ error }}</p>
                     </div>
                     <div class="space-y-2">
-                        <div class="space-y-1">
-                            <h1 class="text-orange-500 text-center lg:text-left text-3xl lg:text-4xl font-semibold">{{ product.name }}</h1>
-                            <p class="text-orange-500 lg:text-lg font-medium">${{ product.price }}</p>
-                        </div>
-                        <div class="flex flex-wrap whitespace-no-wrap items-center text-lg">
-                            <span v-if="!product.user_rating" class="text-orange-400 lg:mr-1">Valoración de los usuarios:</span>
-                            <span v-else class="text-orange-400 lg:mr-1">Valoración de su usuario:</span>
-                            <span>
-                                <template v-if="userRating">
-                                    <span class="select-none text-xl text-orange-500" v-for="n in userRating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-userRating)" :key="n+userRating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.user_rating }} <span class="text-orange-500">★</span>)</span><button @click="deleteRating" class="ml-1 text-blue-500 hover:text-blue-600 focus:text-blue-600 text-sm">Borrar reseña</button>
-                                </template>
-                                <template v-else-if="authenticated">
-                                    <button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in rating" :key="n" @click="addRating(n)">★</button><button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in (5-rating)" :key="n+rating" @click="addRating(n+rating)">☆</button><span class="ml-1 text-sm text-orange-400">({{ product.rating }}<span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
-                                </template>
-                                <template v-else>
-                                    <span class="select-none text-xl text-orange-500" v-for="n in rating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-rating)" :key="n+rating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.rating }} <span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
-                                </template>
-                            </span>
-                        </div>
-                        <p v-if="product.model" class="text-orange-400">Modelo: {{ product.model }}</p>
-                        <p class="text-gray-800">{{ product.description }}</p>
-                        <div class="flex flex-row justify-center items-center">
-                            <NumberSpinnerItem @add="addToCart" :min="1" class="mr-1" v-model.number="quantity"/>
-                        </div>
-                        <div v-if="administrator" class="flex flex-row justify-center items-center space-x-2">
-                            <button @click="remove()" class="btn-outlined btn-outlined-orange px-2 py-1"><font-awesome-icon icon="times"></font-awesome-icon> Eliminar</button>
-                            <router-link :to="{ name: 'edit-product', params: {
-                                productId: product.id
-                            } }" v-if="administrator" class="inline-block btn-outlined btn-outlined-orange px-2 py-1"><font-awesome-icon icon="pencil-alt"></font-awesome-icon> Editar</router-link>
-                        </div>
+                        <input v-model.trim="form.model" type="text" maxlength="100" class="w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out" placeholder="Modelo"/>
+                        <p class="text-red-600" v-for="(error, index) in validationErrors.model" :key="index">{{ error }}</p>
                     </div>
-                </div>
+                    <div class="space-y-2">
+                        <input v-model.number="form.price" @keypress="onlyNumbers($event)" type="text" class="w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out" placeholder="Precio">
+                        <p class="text-red-600" v-for="(error, index) in validationErrors.price" :key="index">{{ error }}</p>
+                    </div>
+                    <div class="space-y-2">
+                        <textarea v-model.trim="form.description" class="w-full border-b border-orange-300 focus:border-orange-400 py-2 px-1 placeholder-gray-700 text-orange-500 transition duration-300 ease-in-out" placeholder="Descripción"></textarea>
+                        <p class="text-red-600" v-for="(error, index) in validationErrors.description" :key="index">{{ error }}</p>
+                    </div>
+                    <div class="space-y-2">
+                        <label>
+                            <span class="text-orange-500">Imágen:</span>
+                            <input type="file" ref="thumbnail" accept="image/*"
+                            @change="form.thumbnail = $event.target.files[0]">
+                        </label>
+                        <div class="w-3/12 h-auto p-2"
+                        v-if="form.thumbnail">
+                            <img 
+                            :src="getImage(form.thumbnail)"
+                            class="border border-orange-600 rounded-md shadow-md">
+                        </div>
+                        <button v-if="form.thumbnail" @click="$refs.thumbnail.value = ''; form.thumbnail = null" type="button" class="text-blue-500 hover:text-blue-600 focus:text-blue-600 text-sm">Borrar imágenes</button>
+                        <p class="text-red-600" v-for="(error, index) in validationErrors.thumbnail" :key="index">{{ error }}</p>
+                    </div>
+                    <div class="space-y-2">
+                        <label>
+                            <span class="text-orange-500">Imágenes de detalle:</span>
+                            <input type="file" ref="details" accept="image/*" multiple
+                            @change="setDetailsImages($event.target.files)">
+                        </label>
+                        <div v-if="detailsC" class="flex flex-row flex-wrap">
+                            <div class="w-3/12 h-auto p-2"
+                            v-for="(image, index) in detailsC" 
+                            :key="index">
+                                <img 
+                                :src="image"
+                                class="border border-orange-600 rounded-md shadow-md">
+                            </div>
+                        </div>
+                        <button v-if="form.details.length > 0" @click="$refs.details.value = ''; form.details = []; detailsC = null" type="button" class="text-blue-500 hover:text-blue-600 focus:text-blue-600 text-sm">Borrar imágenes</button>
+                        <p class="text-red-600" v-for="(error, index) in validationErrors.details" :key="index">{{ error }}</p>
+                        <span v-if="form.details.length == 0" class="text-red-600 text-sm">(Incluir archivos en esta categoría eliminará todas las imágenes actuales del producto, exceptuando la imágen principal)</span>
+                    </div>
+                    <div class="space-y-2">
+                        <label>
+                            <span class="text-orange-500">Categoría:</span>
+                            <select v-model="form.category" class="text-gray-800">
+                                <option disabled value="">Seleccione alguna categoría</option>
+                                <option v-for="(category, index) in categories" :key="index" :value="category.id">
+                                    {{ category.name }}
+                                </option>
+                            </select>
+                        </label>
+                        <p class="text-red-600" v-for="(error, index) in validationErrors.category" :key="index">{{ error }}</p>
+                    </div>
+                    <p class="text-red-600" v-if="generalError">{{ generalError }}</p>
+                    <button :disabled="submiting" type="submit" class="w-full btn-outlined btn-outlined-orange font-semibold text-center px-3 py-2">
+                        <template v-if="submiting">
+                            <span class="spinner spinner-disabled w-6 h-6 mx-2"></span>
+                        </template>
+                        <template v-else>
+                            Modificar producto
+                        </template>
+                    </button>
+                </form>
             </div>
-        </template>
+        </div>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-
-import TitleBanner from './components/TheTitleBanner'
-import NumberSpinnerItem from './components/ViewProduct/ViewProductNumberSpinner'
-
 export default {
     props: {
         productId: {
@@ -82,48 +100,106 @@ export default {
     },
     data() {
         return {
+            submiting: false,
             loading: false,
+            loadingError: '',
             product: null,
-            error: null,
-            quantity: 1,
-            currentImg: null
-        }
-    },
-    computed: {
-        ...mapGetters('auth', [
-            'authenticated',
-            'administrator'
-        ]),
-        rating: function () {
-            return this.product.rating?_.round(parseFloat(this.product.rating)):0
-        },
-        userRating: function () {
-            return this.product.user_rating?_.round(parseFloat(this.product.user_rating)):0
+            categories: [],
+            form: {
+                name: '',
+                model: '',
+                description: '',
+                price: null,
+                thumbnail: null,
+                details: [],
+                category: ''   
+            },
+            validationErrors: {
+                name: [],
+                model: [],
+                description: [],
+                price: [],
+                thumbnail: [],
+                details: [],
+                category: []
+            },
+            generalError: '',
+            detailsC: null
         }
     },
     created () {
-        this.fetchData()
+        this.fetchCategories()
+        var vm = this
+        this.fetchData().then(function () {
+            if(vm.product){
+                document.title = 'Editando "' + vm.product.name + '" | La mueblería';
+                vm.form.name = vm.product.name
+                vm.form.model = vm.product.model
+                vm.form.description = vm.product.description
+                vm.form.price = vm.product.price
+                vm.form.category = vm.product.category.id
+            }
+        })
     },
     watch: {
         $route: function () {
+            this.submiting = false
+            this.loading = false
+            this.loadingError = ''
             this.product = null
-            this.error = null
-            this.quantity = 1
-            this.currentImg = null
-            this.fetchData()
+            this.categories = []
+            this.form.name = ''
+            this.form.model = ''
+            this.form.description = ''
+            this.form.price = null
+            this.form.thumbnail = null
+            this.form.details = []
+            this.form.category = ''
+            this.validationErrors.name = []
+            this.validationErrors.model = []
+            this.validationErrors.description = []
+            this.validationErrors.price = []
+            this.validationErrors.thumbnail = []
+            this.validationErrors.details = []
+            this.validationErrors.category = []
+            this.generalError = ''
+            this.detailsC = null
+            this.fetchCategories()
+            var vm = this
+            this.fetchData().then(function () {
+                if(vm.product){
+                    document.title = 'Editando "' + vm.product.name + '" | La mueblería';
+                    vm.form.name = vm.product.name
+                    vm.form.model = vm.product.model
+                    vm.form.description = vm.product.description
+                    vm.form.price = vm.product.price
+                    vm.form.category = vm.product.category.id
+                }
+            })
         }
     },
     methods: {
-        ...mapActions('cart', {
-            addToCartAction: 'addToCart'
-        }),
+        setDetailsImages: function (files) {
+            this.form.details = files
+            this.detailsC = _.map(files, this.getImage)
+        },
+        getImage: function (imageFile) {
+            return URL.createObjectURL(imageFile)
+        },
+        onlyNumbers: function (event) {
+            event = (event) ? event : window.event
+            var charCode = (event.which) ? event.which : event.keyCode
+            if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+                event.preventDefault()
+            } else {
+                return true
+            }
+        },
         fetchData: async function () {
             this.loading = true
             try {
                 const data = (await axios.get('/api/products/'+this.productId)).data.data
                 this.product = data
-                this.currentImg = this.product.thumbnail
-                document.title = data.name + ' | KakeraGaming';
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
@@ -136,23 +212,15 @@ export default {
                 } else {
                     tempError = "No se pudo comunicar con el servidor";
                 }
-                this.error = tempError + " (" + e.message + ")"
-                document.title = 'Error al cargar producto | KakeraGaming';
+                this.loadingError = tempError + " (" + e.message + ")"
+                document.title = 'Error al cargar producto | La mueblería';
             } finally {
                 this.loading = false
             }
         },
-        addRating: async function (rating) {
+        fetchCategories: async function () {
             try {
-                await axios.post('/api/user/ratings/'+this.productId, {
-                    'rating': rating
-                })
-                this.product.user_rating = rating.toString()
-                this.$notify({
-                    group: 'messages',
-                    type: 'success',
-                    title: 'Reseña agregada correctamente'
-                })
+                this.categories = (await axios.get('/api/categories/')).data
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
@@ -168,107 +236,58 @@ export default {
                 this.$notify({
                     group: 'messages',
                     type: 'error',
-                    title: 'Error',
+                    title: 'Error al cargar las categorias',
                     text: tempError + ' (' + e.message + ')'
-                })
+                });
             }
         },
-        deleteRating: async function () {
+        submitForm: async function () {
+            this.submiting = true
             try {
-                await axios.delete('/api/user/ratings/'+this.productId)
-                this.product.user_rating = null
-                const data = (await axios.get('/api/ratings/'+this.productId)).data
-                this.product.rating = data.rating
-                this.product.n_users_rating = data.n_users_rating
-                this.$notify({
-                    group: 'messages',
-                    type: 'success',
-                    title: 'Reseña eliminada correctamente'
+                var formData = new FormData()
+                var vm = this
+                Object.keys(this.form).forEach(function (input) {
+                    if(vm.form[input] && input != 'details')
+                        formData.append(input, vm.form[input])
+                    else if(input == 'details')
+                        _.forEach(vm.form[input], function (file, index) {
+                            formData.append('details[' + index + ']', file)
+                        })
                 })
-            } catch(e) {
-                var tempError = ""
-                if (e.response) {
-                    if(e.response.status == 404)
-                        tempError += "El recurso solicitado no existe"
-                    else if(e.response.status == 401 || e.response.status == 403)
-                        tempError += "No posee acceso al recurso solicitado"
-                } else if (e.request) {
-                    tempError = "El servidor tardó en responder";
-                } else {
-                    tempError = "No se pudo comunicar con el servidor";
-                }
-                this.$notify({
-                    group: 'messages',
-                    type: 'error',
-                    title: 'Error',
-                    text: tempError + ' (' + e.message + ')'
+                formData.append('_method', 'PUT')
+                await axios.post('/api/products/'+this.productId, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 })
-            }
-        },
-        addToCart: async function() {
-            try{
-                await this.addToCartAction({id: this.productId, quantity: this.quantity})
-                console.log("Producto añadido")
+                console.log("Producto modificado")
                 this.$notify({
                     group: 'messages',
                     type: 'success',
-                    title: 'Producto añadido exitosamente'
+                    title: 'Producto editado exitosamente'
                 });
-            }catch(e){
-                console.log(e);
-                var tempError = ""
-                if (e.response) {
-                    if(e.response.status == 404)
-                        tempError += "El recurso solicitado no existe"
-                    else if(e.response.status == 401 || e.response.status == 403)
-                        tempError += "No posee acceso al recurso solicitado"
-                } else if (e.request) {
-                    tempError = "El servidor tardó en responder";
-                } else {
-                    tempError = "No se pudo comunicar con el servidor";
-                }
-                this.$notify({
-                    group: 'messages',
-                    type: 'error',
-                    title: 'Error',
-                    text: tempError + ' (' + e.message + ')'
-                });
-            }
-        },
-        remove: async function () {
-            this.loading = true
-            try {
-                await axios.delete('/api/products/'+this.product.id)
-                console.log("Producto eliminado")
-                this.$notify({
-                    group: 'messages',
-                    type: 'success',
-                    title: 'Producto eliminado exitosamente'
-                });
-                this.$router.push({ name: 'list', params: {
-                    category: this.product.category
-                }})
+                this.$router.push({ name: 'product', params: {
+                    productId: this.productId
+                } })
             } catch(e) {
-                var tempError = ""
                 if (e.response) {
-                    if(e.response.status == 404)
-                        tempError += "El recurso solicitado no existe"
-                    else if(e.response.status == 401 || e.response.status == 403)
-                        tempError += "No posee acceso al recurso solicitado"
-                } else if (e.request) {
-                    tempError = "El servidor tardó en responder";
+                    if(e.response.status == 401 || e.response.status == 403)
+                        this.generalError = "No posee acceso al recurso solicitado"
+                    else
+                        _.extend(this.validationErrors, e.response.data.errors)
                 } else {
-                    tempError = "No se pudo comunicar con el servidor";
+                    var tempError = ""
+                    if (e.request) {
+                        tempError = "El servidor tardó en responder";
+                    } else {
+                        tempError = "No se pudo comunicar con el servidor";
+                    }
+                    this.generalError = tempError + " (" + e.message + ")"
                 }
-                this.error = tempError + " (" + e.message + ")"
             } finally {
-                this.loading = false
+                this.submiting = false
             }
         }
-    },
-    components: {
-        TitleBanner,
-        NumberSpinnerItem
     }
 }
-</script-->
+</script>

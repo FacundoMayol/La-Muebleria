@@ -93,6 +93,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -123,7 +124,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   created: function created() {
-    this.fetchData();
+    var vm = this;
+    this.fetchData().then(function () {
+      if (vm.product.name) document.title = vm.product.name + ' | La mueblería';
+    });
   },
   watch: {
     $route: function $route() {
@@ -131,7 +135,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.error = null;
       this.quantity = 1;
       this.currentImg = null;
-      this.fetchData();
+      var vm = this;
+      this.fetchData().then(function () {
+        if (vm.product.name) document.title = vm.product.name + ' | La mueblería';
+      });
     }
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])('cart', {
@@ -153,12 +160,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 data = _context.sent.data.data;
                 this.product = data;
                 this.currentImg = this.product.thumbnail;
-                document.title = data.name + ' | KakeraGaming';
-                _context.next = 16;
+                _context.next = 15;
                 break;
 
-              case 10:
-                _context.prev = 10;
+              case 9:
+                _context.prev = 9;
                 _context.t0 = _context["catch"](1);
                 tempError = "";
 
@@ -171,19 +177,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 }
 
                 this.error = tempError + " (" + _context.t0.message + ")";
-                document.title = 'Error al cargar producto | KakeraGaming';
+                document.title = 'Error al cargar producto | La mueblería';
 
-              case 16:
-                _context.prev = 16;
+              case 15:
+                _context.prev = 15;
                 this.loading = false;
-                return _context.finish(16);
+                return _context.finish(15);
 
-              case 19:
+              case 18:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[1, 10, 16, 19]]);
+        }, _callee, this, [[1, 9, 15, 18]]);
       }));
 
       function fetchData() {
@@ -863,6 +869,10 @@ var render = function() {
                           _vm._v("Modelo: " + _vm._s(_vm.product.model))
                         ])
                       : _vm._e(),
+                    _vm._v(" "),
+                    _c("p", { staticClass: "text-orange-400" }, [
+                      _vm._v("Categoría: " + _vm._s(_vm.product.category.name))
+                    ]),
                     _vm._v(" "),
                     _c("p", { staticClass: "text-gray-800" }, [
                       _vm._v(_vm._s(_vm.product.description))

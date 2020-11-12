@@ -9,6 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _components_Logo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Logo */ "./resources/js/views/components/Logo.vue");
 //
 //
 //
@@ -24,7 +25,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    Logo: _components_Logo__WEBPACK_IMPORTED_MODULE_0__["default"]
+  }
+});
 
 /***/ }),
 
@@ -43,64 +51,74 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("main", { staticClass: "container mx-auto px-8 lg:py-48" }, [
-      _c(
-        "div",
-        {
-          staticClass:
-            "flex flex-col justify-center items-center lg:items-start"
-        },
-        [
-          _c(
-            "h1",
-            {
+  return _c(
+    "main",
+    {
+      staticClass:
+        "flex-1 flex flex-col justify-center items-center container mx-auto px-8 py-6"
+    },
+    [
+      _c("div", { staticClass: "grid lg:grid-cols-2" }, [
+        _c(
+          "div",
+          { staticClass: "flex justify-center items-center lg:order-1" },
+          [
+            _c("Logo", {
               staticClass:
-                "text-5xl lg:text-6xl font-bold text-orange-500 text-center lg:text-left"
-            },
-            [_vm._v("KakeraGaming")]
-          ),
-          _vm._v(" "),
-          _c(
-            "p",
-            {
-              staticClass:
-                "text-lg font-light tracking-tight text-center lg:text-left"
-            },
-            [_vm._v("Sitio de venta y armado de computadoras")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass:
-                "flex justify-center lg:justify-start items-center mx-auto lg:mx-0 mt-4"
-            },
-            [
-              _c(
-                "router-link",
-                {
-                  staticClass: "btn-outlined btn-outlined-orange p-2 mr-2",
-                  attrs: { to: { name: "build" } }
-                },
-                [_vm._v("Armar un equipo")]
-              ),
-              _vm._v(" "),
-              _c(
-                "router-link",
-                {
-                  staticClass: "btn-outlined btn-outlined-orange p-2 mr-2",
-                  attrs: { to: { name: "categories" } }
-                },
-                [_vm._v("Explorar componentes")]
-              )
-            ],
-            1
-          )
-        ]
-      )
-    ])
-  ])
+                "text-orange-600 fill-current stroke-current w-8/12 h-auto"
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "flex flex-col justify-center items-center lg:items-start"
+          },
+          [
+            _c(
+              "h1",
+              {
+                staticClass:
+                  "text-5xl lg:text-6xl font-bold text-orange-500 text-center lg:text-left"
+              },
+              [_vm._v("La mueblería")]
+            ),
+            _vm._v(" "),
+            _c(
+              "p",
+              {
+                staticClass:
+                  "text-lg font-light tracking-tight text-center lg:text-left"
+              },
+              [_vm._v("Fábrica de muebles")]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass:
+                  "flex justify-center lg:justify-start items-center mx-auto lg:mx-0 mt-4"
+              },
+              [
+                _c(
+                  "router-link",
+                  {
+                    staticClass: "btn-outlined btn-outlined-orange p-2 mr-2",
+                    attrs: { to: { name: "categories" } }
+                  },
+                  [_vm._v("Explorar productos")]
+                )
+              ],
+              1
+            )
+          ]
+        )
+      ])
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
