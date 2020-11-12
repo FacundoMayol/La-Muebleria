@@ -27,7 +27,7 @@ class ProductFactory extends Factory
             'price' => $this->faker->randomFloat(NULL, 0, 1000),
             'description' => $this->faker->text(),
             'model' => $this->faker->word(),
-            'thumbnail' => $this->faker->image('public/storage/products', 400, 400, 'technics', false)
+            'thumbnail' => $this->faker->image('public/storage/products', 400, 400, 'technics')
         ];
     }
 }

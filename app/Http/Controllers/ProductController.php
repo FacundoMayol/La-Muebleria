@@ -90,23 +90,14 @@ class ProductController extends Controller
         $product->price = $request->input('price');
         $product->description = $request->input('description', '');
         if($request->hasFile('thumbnail')){
-            $file = $request->file('thumbnail');
-            $filename = $file->hashName();
-            Storage::putFileAs(
-                'public/products', $file, $filename
-            );
-            $product->thumbnail = $filename;
+            $product->thumbnail = $request->file('thumbnail')->store('public/products');
         }
         $product->save();
         if($request->hasFile('details')){
             foreach($request->file('details') as $file){
-                $filename = $file->hashName();
-                Storage::putFileAs(
-                    'public/products', $file, $filename
-                );
                 Image::create([
                     'product_id' => $product->id,
-                    'image' => $filename
+                    'image' => $file->store('public/products')
                 ]);
             }
         }
@@ -131,28 +122,19 @@ class ProductController extends Controller
         $product->description = $request->input('description', '');
         if($request->hasFile('thumbnail')){
             if($product->thumbnail)
-                Storage::delete('public/products/'.$product->thumbnail);
-            $file = $request->file('thumbnail');
-            $filename = $file->hashName();
-            Storage::putFileAs(
-                'public/products', $file, $filename
-            );
-            $product->thumbnail = $filename;
+                Storage::delete($product->thumbnail);
+            $product->thumbnail = $request->file('thumbnail')->store('public/product');
         }
         $product->save();
         if($request->hasFile('details')){
             foreach(Image::where('product_id', $product->id)->get() as $image){
-                Storage::delete('public/products/'.$image->image);
+                Storage::delete($image->image);
             }
             Image::where('product_id', $product->id)->delete();
             foreach($request->file('details') as $file){
-                $filename = $file->hashName();
-                Storage::putFileAs(
-                    'public/products', $file, $filename
-                );
                 Image::create([
                     'product_id' => $product->id,
-                    'image' => $filename
+                    'image' => $file->store('public/products')
                 ]);
             }
         }

@@ -22,7 +22,7 @@ class ImageFactory extends Factory
     public function definition()
     {
         return [
-            'image' => $this->faker->image('public/storage/products', 400, 400, 'technics', false)
+            'image' => $this->faker->image('public/storage/products', 400, 400, 'technics')
         ];
     }
 }
