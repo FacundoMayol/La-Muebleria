@@ -50,9 +50,9 @@ class ProductController extends Controller
         $ratingStart = is_numeric($request->input('rating_start'))?$request->input('rating_start'):null;
         $ratingEnd = is_numeric($request->input('rating_end'))?$request->input('rating_end'):null;
         if($ratingStart)
-            $list = $list->having(DB::raw('avg("ratings"."rating")'), '>=', (int) $ratingStart);
+            $list = $list->having(DB::raw('ifnull(avg("ratings"."rating"), 0)'), '>=', (int) $ratingStart);
         if($ratingEnd)
-            $list = $list->having(DB::raw('avg("ratings"."rating")'), '<=', (int) $ratingEnd);
+            $list = $list->having(DB::raw('ifnull(avg("ratings"."rating"), 0)'), '<=', (int) $ratingEnd);
         $sort = $request->input('sort');
         if($sort){
             if($sort != 'rating')
