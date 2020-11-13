@@ -388,7 +388,7 @@ export default {
                 this.items = data.data
                 this.totalItems = data.total
                 this.nPages = data.n_pages
-                this.maxPrice = parseFloat(data.max_price)
+                this.maxPrice = data.max_price?parseFloat(data.max_price):100
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
