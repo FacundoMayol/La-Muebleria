@@ -90,14 +90,14 @@ class ProductController extends Controller
         $product->price = $request->input('price');
         $product->description = $request->input('description', '');
         if($request->hasFile('thumbnail')){
-            $product->thumbnail = $request->file('thumbnail')->store('public/products');
+            $product->thumbnail = $request->file('thumbnail')->store('products');
         }
         $product->save();
         if($request->hasFile('details')){
             foreach($request->file('details') as $file){
                 Image::create([
                     'product_id' => $product->id,
-                    'image' => $file->store('public/products')
+                    'image' => $file->store('products')
                 ]);
             }
         }
@@ -123,7 +123,7 @@ class ProductController extends Controller
         if($request->hasFile('thumbnail')){
             if($product->thumbnail)
                 Storage::delete($product->thumbnail);
-            $product->thumbnail = $request->file('thumbnail')->store('public/product');
+            $product->thumbnail = $request->file('thumbnail')->store('product');
         }
         $product->save();
         if($request->hasFile('details')){
@@ -134,7 +134,7 @@ class ProductController extends Controller
             foreach($request->file('details') as $file){
                 Image::create([
                     'product_id' => $product->id,
-                    'image' => $file->store('public/products')
+                    'image' => $file->store('products')
                 ]);
             }
         }
