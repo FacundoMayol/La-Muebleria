@@ -21,6 +21,9 @@
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
         <meta name="theme-color" content="#ffffff">
+        <meta name="description" content="Fábricación y venta muebles como de escritorios, bibliotecas, sillas, mesas y sillones.">
+        <meta name="keywords" content="Muebles, Fábrica, Venta, escritorios, bibliotecas, sillas, mesas, como armar una mesa, como armar una silla, Fábrica de muebles">
+        <meta name="author" content="Facundo Mayol, Muñoz Facundo, Steiervalt Bruno y Farias Bruno">
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
