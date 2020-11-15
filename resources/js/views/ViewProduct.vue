@@ -12,10 +12,10 @@
             </div>
         </template>
         <template v-else>
-            <div class="container mx-auto p-5 mt-2 lg:mt-5 break-all">
+            <div class="container flex-1 mx-auto p-5 mt-2 lg:mt-5">
                 <div class="grid lg:grid-cols-2 gap-x-12 gap-y-3">
-                    <div class="flex flex-1">
-                        <div class="w-3/12 lg:w-2/12 px-2 flex flex-col gap-y-2 justify-start items-center">
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-3 lg:col-span-2 px-2 flex flex-col gap-y-2 justify-start items-center">
                             <div 
                             v-for="(image, index) in [product.thumbnail].concat(product.images)" :key="index"
                             @mouseenter="currentImg = image"
@@ -23,7 +23,7 @@
                                 <img :src="image" alt="Imágen del producto">
                             </div>
                         </div>
-                        <div class="w-9/12 lg:w-10/12">
+                        <div class="col-span-9 lg:col-span-10">
                             <img v-if="currentImg" class="object-contain object-center w-full" :src="currentImg" alt="Imágen del producto"/>
                         </div>
                     </div>
