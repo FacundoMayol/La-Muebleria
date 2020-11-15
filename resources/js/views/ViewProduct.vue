@@ -12,53 +12,51 @@
             </div>
         </template>
         <template v-else>
-            <div class="container flex-1 mx-auto p-5 my-2 lg:my-5 overflow-hidden">
-                <div class="grid lg:grid-cols-2 lg:gap-x-12 gap-y-3 lg:gap-y-0 max-w-full">
-                    <div class="grid grid-cols-12 gap-x-2">
-                        <div class="col-span-3 lg:col-span-2 flex flex-col gap-y-2 justify-start items-center">
-                            <div 
-                            v-for="(image, index) in [product.thumbnail].concat(product.images)" :key="index"
-                            @mouseenter="currentImg = image"
-                            class="rounded-md p-1 border bg-gray-200 border-gray-300 hover:cursor-pointer flex justify-center items-center w-full h-auto">
-                                <img :src="image" alt="Imágen del producto">
-                            </div>
-                        </div>
-                        <div class="col-span-9 lg:col-span-10">
-                            <img v-if="currentImg" class="object-contain object-center w-full" :src="currentImg" alt="Imágen del producto"/>
+            <div class="container flex-1 mx-auto p-5 my-2 lg:my-5 grid lg:grid-cols-2 lg:gap-x-12 gap-y-3 lg:gap-y-0">
+                <div class="grid grid-cols-12 gap-x-2">
+                    <div class="col-span-3 lg:col-span-2 flex flex-col gap-y-2 justify-start items-center">
+                        <div 
+                        v-for="(image, index) in [product.thumbnail].concat(product.images)" :key="index"
+                        @mouseenter="currentImg = image"
+                        class="rounded-md p-1 border bg-gray-200 border-gray-300 hover:cursor-pointer flex justify-center items-center w-full h-auto">
+                            <img :src="image" alt="Imágen del producto">
                         </div>
                     </div>
-                    <div class="space-y-2">
-                        <div class="space-y-1">
-                            <h1 class="text-orange-500 text-center lg:text-left text-3xl lg:text-4xl font-semibold">{{ product.name }}</h1>
-                            <p class="text-orange-500 lg:text-lg font-medium">${{ product.price }}</p>
-                        </div>
-                        <div class="flex flex-wrap whitespace-no-wrap items-center text-lg">
-                            <span v-if="!product.user_rating" class="text-orange-400 lg:mr-1">Valoración de los usuarios:</span>
-                            <span v-else class="text-orange-400 lg:mr-1">Valoración de su usuario:</span>
-                            <span>
-                                <template v-if="userRating">
-                                    <span class="select-none text-xl text-orange-500" v-for="n in userRating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-userRating)" :key="n+userRating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.user_rating?product.user_rating:'0' }} <span class="text-orange-500">★</span>)</span><button @click="deleteRating" class="ml-1 text-blue-500 hover:text-blue-600 focus:text-blue-600 text-sm">Borrar reseña</button>
-                                </template>
-                                <template v-else-if="authenticated">
-                                    <button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in rating" :key="n" @click="addRating(n)">★</button><button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in (5-rating)" :key="n+rating" @click="addRating(n+rating)">☆</button><span class="ml-1 text-sm text-orange-400">({{ product.rating?product.rating:'0' }}<span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
-                                </template>
-                                <template v-else>
-                                    <span class="select-none text-xl text-orange-500" v-for="n in rating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-rating)" :key="n+rating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.rating?product.rating:'0' }} <span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
-                                </template>
-                            </span>
-                        </div>
-                        <p v-if="product.model" class="text-orange-400">Modelo: {{ product.model }}</p>
-                        <p class="text-orange-400">Categoría: {{ product.category.name }}</p>
-                        <p class="text-gray-800">{{ product.description }}</p>
-                        <div class="flex flex-row justify-center items-center">
-                            <NumberSpinnerItem @add="addToCart" :min="1" class="mr-1" v-model.number="quantity"/>
-                        </div>
-                        <div v-if="administrator" class="flex flex-row justify-center items-center space-x-2">
-                            <button @click="remove()" class="btn-outlined btn-outlined-orange px-2 py-1"><font-awesome-icon icon="times"></font-awesome-icon> Eliminar</button>
-                            <router-link :to="{ name: 'edit-product', params: {
-                                productId: product.id
-                            } }" v-if="administrator" class="inline-block btn-outlined btn-outlined-orange px-2 py-1"><font-awesome-icon icon="pencil-alt"></font-awesome-icon> Editar</router-link>
-                        </div>
+                    <div class="col-span-9 lg:col-span-10">
+                        <img v-if="currentImg" class="object-contain object-center w-full" :src="currentImg" alt="Imágen del producto"/>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="space-y-1">
+                        <h1 class="text-orange-500 text-center lg:text-left text-3xl lg:text-4xl font-semibold">{{ product.name }}</h1>
+                        <p class="text-orange-500 lg:text-lg font-medium">${{ product.price }}</p>
+                    </div>
+                    <div class="flex flex-wrap whitespace-no-wrap items-center text-lg">
+                        <span v-if="!product.user_rating" class="text-orange-400 lg:mr-1">Valoración de los usuarios:</span>
+                        <span v-else class="text-orange-400 lg:mr-1">Valoración de su usuario:</span>
+                        <span>
+                            <template v-if="userRating">
+                                <span class="select-none text-xl text-orange-500" v-for="n in userRating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-userRating)" :key="n+userRating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.user_rating?product.user_rating:'0' }} <span class="text-orange-500">★</span>)</span><button @click="deleteRating" class="ml-1 text-blue-500 hover:text-blue-600 focus:text-blue-600 text-sm">Borrar reseña</button>
+                            </template>
+                            <template v-else-if="authenticated">
+                                <button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in rating" :key="n" @click="addRating(n)">★</button><button class="text-xl text-orange-500 transform origin-bottom transition duration-200 ease-in-out hover:scale-125 focus:scale-125" v-for="n in (5-rating)" :key="n+rating" @click="addRating(n+rating)">☆</button><span class="ml-1 text-sm text-orange-400">({{ product.rating?product.rating:'0' }}<span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
+                            </template>
+                            <template v-else>
+                                <span class="select-none text-xl text-orange-500" v-for="n in rating" :key="n">★</span><span class="select-none text-xl text-orange-500" v-for="n in (5-rating)" :key="n+rating">☆</span><span class="ml-1 text-sm text-orange-400">({{ product.rating?product.rating:'0' }} <span class="text-orange-500">★</span> x {{ product.n_users_rating }} usuarios)</span>
+                            </template>
+                        </span>
+                    </div>
+                    <p v-if="product.model" class="text-orange-400">Modelo: {{ product.model }}</p>
+                    <p class="text-orange-400">Categoría: {{ product.category.name }}</p>
+                    <p class="text-gray-800">{{ product.description }}</p>
+                    <div class="flex flex-row justify-center items-center">
+                        <NumberSpinnerItem @add="addToCart" :min="1" class="mr-1" v-model.number="quantity"/>
+                    </div>
+                    <div v-if="administrator" class="flex flex-row justify-center items-center space-x-2">
+                        <button @click="remove()" class="btn-outlined btn-outlined-orange px-2 py-1"><font-awesome-icon icon="times"></font-awesome-icon> Eliminar</button>
+                        <router-link :to="{ name: 'edit-product', params: {
+                            productId: product.id
+                        } }" v-if="administrator" class="inline-block btn-outlined btn-outlined-orange px-2 py-1"><font-awesome-icon icon="pencil-alt"></font-awesome-icon> Editar</router-link>
                     </div>
                 </div>
             </div>
