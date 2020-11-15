@@ -12,7 +12,7 @@
             </div>
         </template>
         <template v-else>
-            <div class="container mx-auto p-5 mt-2 lg:mt-5">
+            <div class="container mx-auto p-5 mt-2 lg:mt-5 break-all">
                 <div class="grid lg:grid-cols-2 gap-x-12 gap-y-3">
                     <div class="flex flex-1">
                         <div class="w-3/12 lg:w-2/12 px-2 flex flex-col gap-y-2 justify-start items-center">
