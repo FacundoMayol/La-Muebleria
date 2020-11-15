@@ -6,8 +6,8 @@
             </div>
             <div class="flex items-center justify-center space-x-2">
                 <SocialIcon :icon="['fab', 'instagram']" href="https://www.instagram.com/lamuebleria_ffbb/?hl=es-la" id="instagram-b"/>
-                <SocialIcon :icon="['fab', 'facebook-f']" href="https://www.instagram.com/lamuebleria_ffbb/?hl=es-la" id="facebook-b"/>
-                <SocialIcon :icon="['fab', 'twitter']" href="https://www.instagram.com/lamuebleria_ffbb/?hl=es-la" id="twitter-b"/>
+                <SocialIcon :icon="['fab', 'facebook-f']" href="https://www.facebook.com/La-Muebler%C3%ADa-107573901170415" id="facebook-b"/>
+                <SocialIcon :icon="['fab', 'twitter']" href="https://twitter.com/FbsMuebleria" id="twitter-b"/>
             </div>
         </div>
     </footer>
