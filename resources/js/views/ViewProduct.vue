@@ -31,7 +31,7 @@
                         <h1 class="text-orange-500 text-center lg:text-left text-3xl lg:text-4xl font-semibold">{{ product.name }}</h1>
                         <p class="text-orange-500 lg:text-lg font-medium">${{ product.price }}</p>
                     </div>
-                    <div class="flex flex-wrap whitespace-no-wrap break-all items-center text-lg">
+                    <div class="flex flex-wrap items-center text-lg">
                         <span v-if="!product.user_rating" class="text-orange-400 lg:mr-1">Valoración de los usuarios:</span>
                         <span v-else class="text-orange-400 lg:mr-1">Valoración de su usuario:</span>
                         <span>
