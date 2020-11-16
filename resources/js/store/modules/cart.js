@@ -43,7 +43,7 @@ const actions = {
     async emptyCart({
         state,
     }) {
-        const url = 'api/carts/'+state.cartId+'/items/'
+        const url = 'api/carts/'+state.cartId+'/items'
         await axios.delete(url, {
             data: {
                 cart_key: state.cartKey

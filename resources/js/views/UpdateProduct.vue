@@ -220,7 +220,7 @@ export default {
         },
         fetchCategories: async function () {
             try {
-                this.categories = (await axios.get('/api/categories/')).data
+                this.categories = (await axios.get('/api/categories')).data
             } catch(e) {
                 var tempError = ""
                 if (e.response) {
