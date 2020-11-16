@@ -384,7 +384,7 @@ export default {
                     params.price_end = this.priceEnd
                 const data = (await axios.get('/api/category/'+this.categoryParam, {
                     params
-                })).data
+                })).then.data
                 this.items = data.data
                 this.totalItems = data.total
                 this.nPages = data.n_pages

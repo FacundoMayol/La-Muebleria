@@ -2,7 +2,7 @@
     <div class="p-2 flex flex-row items-center space-x-4 lg:space-x-6">
         <div class="text-center w-20 md:w-24 hover:relative hover:z-10 flex-shrink-0 rounded-sm border bg-white transition-transform duration-150 ease-in-out transform hover:scale-150 cursor-pointer">
             <template v-if="value.product.thumbnail">
-                <img class="block w-full h-auto" :src="'/storage/products/'+value.product.thumbnail"/>
+                <img class="block w-full h-auto" :src="value.product.thumbnail"/>
             </template>
             <template v-else>
                 <span>-</span>

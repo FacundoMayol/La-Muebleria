@@ -63,7 +63,7 @@ class ProductController extends Controller
         $page = (int) $request->input('p', 0);
         $count = $list->get()->count();
         $list = $list->skip($page*10)->take(10);
-        return ['data' => ProductResource::collection($list->get()), 'total' => $count, 'n_pages' => ceil($count/10), 'current_page' => $page,'max_price' => $maxPrice];
+        return ['data' => ProductResource::collection($list->get()), 'total' => $count, 'n_pages' => ceil($count/10), 'current_page' => $page, 'max_price' => $maxPrice];
     }
 
     public function show(Product $product, Request $request)
