@@ -391,14 +391,6 @@ export default {
             }
         },
         addToCart: async function(product) {
-            if(!this.administrator){
-                this.$notify({
-                    group: 'messages',
-                    type: 'error',
-                    title: 'No posee autorización para realizar tal operación'
-                })
-                return
-            }
             try{
                 await this.addToCartAction(product)
                 console.log("Producto añadido")
@@ -429,6 +421,14 @@ export default {
             }
         },
         removeProduct: async function (product) {
+            if(!this.administrator){
+                this.$notify({
+                    group: 'messages',
+                    type: 'error',
+                    title: 'No posee autorización para realizar tal operación'
+                })
+                return
+            }
             this.loading = true
             try {
                 await axios.delete('/api/products/'+product.id)
