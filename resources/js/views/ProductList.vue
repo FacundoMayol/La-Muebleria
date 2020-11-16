@@ -7,22 +7,6 @@
                     <button @click="showFilters = !showFilters" class="btn-outlined btn-outlined-orange font-semibold flex-1 py-1">Filtros</button>
                 </div>
                 <PopupOverlay :show.sync="showFilters">
-                    <!--div class="border border-gray-400 rounded-md p-5 mb-3">
-                        <router-link :to="{ name: 'build' }" class="block font-semibold text-orange-500 text-center">Build actual</router-link>
-                        <hr class="border-gray-400 my-3"/>
-                        <div class="flex flex-wrap leading-tight">
-                            <div class="mr-3 mb-2"><span class="text-xs font-medium">Partes</span><br><span class="font-semibold text-orange-500">123</span></div>
-                            <div class="mr-3 mb-2"><span class="text-xs font-medium">Total</span><br><span class="font-semibold text-orange-500">123</span></div>
-                            <div class="mr-3 mb-2"><span class="text-xs font-medium">Wattage aproximado</span><br><span class="font-semibold text-orange-500">123</span></div>
-                        </div>
-                        <div class="text-sm text-gray-600">
-                            <label class="checkbox justify-center lg:justify-start">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                                Filtrado de compatibilidad
-                            </label>
-                        </div>
-                    </div-->
                     <div>
                         <CategoryItem title="Filtros"/>
                         <CollapsibleItem title="Precio" class="mb-2">
@@ -384,7 +368,7 @@ export default {
                     params.price_end = this.priceEnd
                 const data = (await axios.get('/api/category/'+this.categoryParam, {
                     params
-                })).then.data
+                })).data
                 this.items = data.data
                 this.totalItems = data.total
                 this.nPages = data.n_pages
