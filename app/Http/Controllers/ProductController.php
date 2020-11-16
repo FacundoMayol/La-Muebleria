@@ -32,7 +32,7 @@ class ProductController extends Controller
         $list = $category->products();
         $list = $list->with(['ratings'])
             ->leftJoin('ratings', 'ratings.product_id', '=', 'products.id')
-            ->select(['products.*', DB::raw('avg(`ratings`.`rating`) as `rating`')])
+            ->select(['products.*', DB::raw('avg(ratings.rating) as rating')])
             ->groupBy('products.id');
         $maxPrice = $list->get()->max('price');
         if($request->input('s'))
@@ -50,9 +50,9 @@ class ProductController extends Controller
         $ratingStart = is_numeric($request->input('rating_start'))?$request->input('rating_start'):null;
         $ratingEnd = is_numeric($request->input('rating_end'))?$request->input('rating_end'):null;
         if($ratingStart)
-            $list = $list->having(DB::raw('coalesce(avg(`ratings`.`rating`), 0)'), '>=', (int) $ratingStart);
+            $list = $list->having(DB::raw('coalesce(avg(ratings.rating), 0)'), '>=', (int) $ratingStart);
         if($ratingEnd)
-            $list = $list->having(DB::raw('coalesce(avg(`ratings`.`rating`), 0)'), '<=', (int) $ratingEnd);
+            $list = $list->having(DB::raw('coalesce(avg(ratings.rating), 0)'), '<=', (int) $ratingEnd);
         $sort = $request->input('sort');
         if($sort){
             if($sort != 'rating')
